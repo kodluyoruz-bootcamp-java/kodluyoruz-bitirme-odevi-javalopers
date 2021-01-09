@@ -1,0 +1,47 @@
+package org.kodluyoruz.warehouseapi.base;
+
+import org.kodluyoruz.warehouseapi.model.entites.BaseEntity;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Collection;
+
+@Transactional(readOnly = true)
+public abstract class AbstractBaseWarehouseAPIRepository<T extends BaseEntity, ID extends Long> extends AbstractBaseEntityManager<T>
+        implements WarehouseAPICRUDBaseRepository<T, ID> {
+
+    @Override
+    public Collection<T> list() {
+        return getSession().createQuery("from " +
+                entity.getName() + " where status = 'ACTIVE'", entity).getResultList();
+    }
+
+    /**
+     * persist metodu ilgili entity' yi database' e kayıt etmemize yarıyor. herhangi bir obje alır. bu bir entity ise
+     * ilgili tabloyu bulur ve o nesneyi kayıt eder. database' de create, update ve delete metodları için transactional açılması
+     * zorunludur.
+     */
+    @Override
+    @Transactional
+    public T create(T entity) {
+        getSession().persist(entity);
+        return entity;
+    }
+
+    // update metodu da aynı şekilde
+    @Override
+    @Transactional
+    public T update(T entity) {
+        getSession().update(entity);
+        return entity;
+    }
+
+    // delete işleminde datalar fiziksel olarak silinmez. status bilgisini deleted' a çekiyoruz. o id' ye sahip olan nesne için
+    @Override
+    @Transactional
+    public void delete(ID id) {
+        getSession()
+                .createQuery("update " + entity.getName() + " set status = 'DELETED' where id=:entityId")
+                .setParameter("entityId", id)
+                .executeUpdate();
+    }
+}
