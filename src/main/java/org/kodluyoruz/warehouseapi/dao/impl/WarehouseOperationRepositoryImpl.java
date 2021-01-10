@@ -4,8 +4,10 @@ import org.kodluyoruz.warehouseapi.base.AbstractBaseWarehouseAPIOperationReposit
 import org.kodluyoruz.warehouseapi.dao.WarehouseOperationRepository;
 import org.kodluyoruz.warehouseapi.model.entites.WarehouseEntity;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 @Repository
+@Transactional(readOnly = true)
 public class WarehouseOperationRepositoryImpl extends AbstractBaseWarehouseAPIOperationRepository<WarehouseEntity>
         implements WarehouseOperationRepository {
 
@@ -17,5 +19,24 @@ public class WarehouseOperationRepositoryImpl extends AbstractBaseWarehouseAPIOp
                 .setParameter("warehouseId", warehouseId)
                 .uniqueResult();
         return result > 0;
+    }
+
+    @Override
+    public boolean isThereAnyActiveWarehouseAtThisId(Long id) {
+        Long result = getSession()
+                .createQuery("select count(*) from WarehouseEntity where id=:warehouseId and status='ACTIVE'", Long.class)
+                .setParameter("warehouseId", id)
+                .uniqueResult();
+        return result > 0;
+    }
+
+    @Override
+    @Transactional
+    public void transferAllProducts(Long fromWarehouseId, Long toWarehouseId) {
+        getSession()
+                .createQuery("update ProductWarehouse set warehouse_id=:toWarehouseId where warehouse_id=:fromWarehouseId")
+                .setParameter("toWarehouseId", toWarehouseId)
+                .setParameter("fromWarehouseId", fromWarehouseId)
+                .executeUpdate();
     }
 }

@@ -7,4 +7,8 @@ import org.kodluyoruz.warehouseapi.model.entites.WarehouseEntity;
 public interface WarehouseOperationRepository extends WarehouseAPIOperationBaseRepository<WarehouseEntity> {
 
     boolean isThereAnyProductForThisWarehouse(Long warehouseId);
+
+    boolean isThereAnyActiveWarehouseAtThisId(Long id);
+
+    void transferAllProducts(Long fromWarehouseId, Long toWarehouseId);
 }
