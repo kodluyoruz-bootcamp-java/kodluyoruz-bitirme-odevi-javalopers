@@ -143,9 +143,6 @@ public class ProductCRUDServiceImpl implements ProductCRUDService {
     public WarehouseAPIResponseHolder<?> delete(Long id) {
         // Ürün silinmeden önce mutlaka stok bilgisine bakılmalı.
         // Depolar içerisinde ilgili ürüne ait stoğu 0'dan büyük bir kayıt var ise ürün silinmemeli ve hata fırlatılmalı
-        BaseEntity baseEntity = new BaseEntity();
-        baseEntity.setId(id);
-        baseEntity.setUpdatedAt(new Date());
 
         boolean thereAnyProductForThisId = productsOperationService.isThereAnyProductForThisId(id);
         if (thereAnyProductForThisId) {
@@ -156,7 +153,7 @@ public class ProductCRUDServiceImpl implements ProductCRUDService {
                     .build());
         }
 
-        productCRUDRepository.delete(baseEntity);
+        productCRUDRepository.delete(id);
         return new WarehouseAPIResponseHolder<>(HttpStatus.OK);
     }
 }

@@ -132,9 +132,7 @@ public class WarehouseCRUDServiceImpl implements WarehouseCRUDService {
     @Override
     public WarehouseAPIResponseHolder<?> delete(Long id) {
         // ürün kontrolü yapıyoruz
-        BaseEntity baseEntity = new BaseEntity();
-        baseEntity.setId(id);
-        baseEntity.setUpdatedAt(new Date());
+
         boolean thereAnyProductForThisWarehouse = warehouseOperationService.isThereAnyProductForThisWarehouse(id);
         if (thereAnyProductForThisWarehouse) {
             return new WarehouseAPIResponseHolder<>(HttpStatus.NO_CONTENT, WarehouseAPIResponseError
@@ -144,7 +142,7 @@ public class WarehouseCRUDServiceImpl implements WarehouseCRUDService {
                     .build());
         }
 
-        warehouseCRUDRepository.delete(baseEntity);
+        warehouseCRUDRepository.delete(id);
         return new WarehouseAPIResponseHolder<>(HttpStatus.OK);
     }
 }

@@ -12,6 +12,6 @@ public interface WarehouseAPICRUDBaseRepository<T extends BaseEntity> {
 
     T update(T entity);
 
-    void delete(BaseEntity entity);
+    void delete(Long id);
 
 }
