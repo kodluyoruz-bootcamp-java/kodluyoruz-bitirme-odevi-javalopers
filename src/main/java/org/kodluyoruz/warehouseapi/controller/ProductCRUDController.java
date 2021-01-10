@@ -23,7 +23,7 @@ public class ProductCRUDController {
         return productCRUDService.list();
     }
 
-    @PostMapping()
+    @PostMapping
     public WarehouseAPIResponseHolder<ProductDTO> create(@RequestBody ProductDTO productDTO) {
         return productCRUDService.create(productDTO);
     }

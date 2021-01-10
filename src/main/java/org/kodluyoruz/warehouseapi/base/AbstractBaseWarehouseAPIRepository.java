@@ -1,9 +1,11 @@
 package org.kodluyoruz.warehouseapi.base;
 
 import org.kodluyoruz.warehouseapi.model.entites.BaseEntity;
+import org.kodluyoruz.warehouseapi.model.enums.WarehouseStatusEnum;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
+import java.util.Date;
 
 @Transactional(readOnly = true)
 public abstract class AbstractBaseWarehouseAPIRepository<T extends BaseEntity> extends AbstractBaseEntityManager<T>
@@ -38,11 +40,12 @@ public abstract class AbstractBaseWarehouseAPIRepository<T extends BaseEntity> e
     // delete işleminde datalar fiziksel olarak silinmez. status bilgisini deleted' a çekiyoruz. o id' ye sahip olan nesne için
     @Override
     @Transactional
-    public void delete(BaseEntity baseEntity) {
+    public void delete(Long id) {
         getSession()
-                .createQuery("update " + entity.getName() + " set status = 'DELETED', updated_date=:date where id=:entityId")
-                .setParameter("entityId", baseEntity.getId())
-                .setParameter("date",baseEntity.getUpdatedAt())
+                .createQuery("update " + entity.getName() + " set status =:newStatus, updated_date=:date where id=:entityId")
+                .setParameter("entityId", id)
+                .setParameter("newStatus", WarehouseStatusEnum.DELETED)
+                .setParameter("date", new Date())
                 .executeUpdate();
     }
 }
