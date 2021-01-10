@@ -4,7 +4,7 @@ import org.kodluyoruz.warehouseapi.model.entites.BaseEntity;
 
 import java.util.Collection;
 
-public interface WarehouseAPICRUDBaseRepository<T extends BaseEntity, ID extends Long> {
+public interface WarehouseAPICRUDBaseRepository<T extends BaseEntity> {
 
     Collection<T> list();
 
@@ -12,6 +12,6 @@ public interface WarehouseAPICRUDBaseRepository<T extends BaseEntity, ID extends
 
     T update(T entity);
 
-    void delete(ID id);
+    void delete(BaseEntity entity);
 
 }

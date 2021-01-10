@@ -19,6 +19,11 @@ public class ProductsOperationServiceImpl implements ProductsOperationService {
     }
 
     @Override
+    public boolean hasExistSameCodeAndId(Long id, String code) {
+        return productsOperationRepository.hasExistSameCodeAndId(id, code);
+    }
+
+    @Override
     public boolean isThereAnyOfThis() {
         return productsOperationRepository.isThereAnyOfThis();
     }

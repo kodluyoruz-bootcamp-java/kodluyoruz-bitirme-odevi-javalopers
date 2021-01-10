@@ -6,5 +6,5 @@ import org.kodluyoruz.warehouseapi.model.entites.ProductEntity;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class ProductCRUDRepositoryImpl extends AbstractBaseWarehouseAPIRepository<ProductEntity, Long> implements ProductCRUDRepository {
+public class ProductCRUDRepositoryImpl extends AbstractBaseWarehouseAPIRepository<ProductEntity> implements ProductCRUDRepository {
 }

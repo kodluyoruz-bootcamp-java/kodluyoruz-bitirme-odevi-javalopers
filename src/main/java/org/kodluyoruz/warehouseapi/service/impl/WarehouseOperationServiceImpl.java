@@ -10,13 +10,18 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 @Service
 @Slf4j
-public class WarehouseOperationServiceImpl implements WarehouseOperationService{
+public class WarehouseOperationServiceImpl implements WarehouseOperationService {
 
     private final WarehouseOperationRepository warehouseOperationRepository;
 
     @Override
     public boolean hasExistSameCode(String code) {
         return warehouseOperationRepository.hasExistSameCode(code);
+    }
+
+    @Override
+    public boolean hasExistSameCodeAndId(Long id, String code) {
+        return warehouseOperationRepository.hasExistSameCodeAndId(id, code);
     }
 
     @Override

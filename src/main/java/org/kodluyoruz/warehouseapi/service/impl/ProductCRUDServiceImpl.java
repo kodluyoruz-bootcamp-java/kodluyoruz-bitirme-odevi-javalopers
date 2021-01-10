@@ -7,8 +7,8 @@ import org.kodluyoruz.warehouseapi.base.WarehouseAPIResponseHolder;
 import org.kodluyoruz.warehouseapi.converter.ProductDTOToProductEntityConverter;
 import org.kodluyoruz.warehouseapi.converter.ProductEntityToProductDTOConverter;
 import org.kodluyoruz.warehouseapi.dao.ProductCRUDRepository;
-import org.kodluyoruz.warehouseapi.model.dto.BaseIDDTO;
 import org.kodluyoruz.warehouseapi.model.dto.ProductDTO;
+import org.kodluyoruz.warehouseapi.model.entites.BaseEntity;
 import org.kodluyoruz.warehouseapi.model.entites.ProductEntity;
 import org.kodluyoruz.warehouseapi.service.ProductCRUDService;
 import org.kodluyoruz.warehouseapi.service.ProductsOperationService;
@@ -96,8 +96,9 @@ public class ProductCRUDServiceImpl implements ProductCRUDService {
     }
 
     @Override
-    public WarehouseAPIResponseHolder<ProductDTO> update(ProductDTO data) {
+    public WarehouseAPIResponseHolder<ProductDTO> update(Long id, ProductDTO data) {
 
+        data.setId(id);
         // DB'de kayıtlı bir ürün yok ise hata fırlatılmalı
         boolean isAnyProductsExists = productsOperationService.isThereAnyOfThis();
         if (!isAnyProductsExists) {
@@ -122,7 +123,7 @@ public class ProductCRUDServiceImpl implements ProductCRUDService {
         }
 
         // güncelleme yaparken ürün codu değiştirilirse ve aynı kod ile kayıtlı başka bir ürün varsa kaydı güncelleme
-        boolean isExist = productsOperationService.hasExistSameCode(data.getCode());
+        boolean isExist = productsOperationService.hasExistSameCodeAndId(data.getId(), data.getCode());
         if (isExist) {
             return new WarehouseAPIResponseHolder<>(HttpStatus.NO_CONTENT, WarehouseAPIResponseError
                     .builder()
@@ -139,10 +140,14 @@ public class ProductCRUDServiceImpl implements ProductCRUDService {
     }
 
     @Override
-    public WarehouseAPIResponseHolder<?> delete(BaseIDDTO data) {
+    public WarehouseAPIResponseHolder<?> delete(Long id) {
         // Ürün silinmeden önce mutlaka stok bilgisine bakılmalı.
         // Depolar içerisinde ilgili ürüne ait stoğu 0'dan büyük bir kayıt var ise ürün silinmemeli ve hata fırlatılmalı
-        boolean thereAnyProductForThisId = productsOperationService.isThereAnyProductForThisId(data.getId());
+        BaseEntity baseEntity = new BaseEntity();
+        baseEntity.setId(id);
+        baseEntity.setUpdatedAt(new Date());
+
+        boolean thereAnyProductForThisId = productsOperationService.isThereAnyProductForThisId(id);
         if (thereAnyProductForThisId) {
             return new WarehouseAPIResponseHolder<>(HttpStatus.NO_CONTENT, WarehouseAPIResponseError
                     .builder()
@@ -151,7 +156,7 @@ public class ProductCRUDServiceImpl implements ProductCRUDService {
                     .build());
         }
 
-        productCRUDRepository.delete(data.getId());
+        productCRUDRepository.delete(baseEntity);
         return new WarehouseAPIResponseHolder<>(HttpStatus.OK);
     }
 }

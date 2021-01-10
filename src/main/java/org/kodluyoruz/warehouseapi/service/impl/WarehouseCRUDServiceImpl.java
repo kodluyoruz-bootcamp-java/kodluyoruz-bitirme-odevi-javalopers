@@ -9,6 +9,7 @@ import org.kodluyoruz.warehouseapi.converter.WarehouseEntityToWarehouseDTOConver
 import org.kodluyoruz.warehouseapi.dao.WarehouseCRUDRepository;
 import org.kodluyoruz.warehouseapi.model.dto.BaseIDDTO;
 import org.kodluyoruz.warehouseapi.model.dto.WarehouseDTO;
+import org.kodluyoruz.warehouseapi.model.entites.BaseEntity;
 import org.kodluyoruz.warehouseapi.model.entites.WarehouseEntity;
 import org.kodluyoruz.warehouseapi.service.WarehouseCRUDService;
 import org.kodluyoruz.warehouseapi.service.WarehouseOperationService;
@@ -16,6 +17,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -79,7 +83,10 @@ public class WarehouseCRUDServiceImpl implements WarehouseCRUDService {
     }
 
     @Override
-    public WarehouseAPIResponseHolder<WarehouseDTO> update(WarehouseDTO data) {
+    public WarehouseAPIResponseHolder<WarehouseDTO> update(Long id, WarehouseDTO data) {
+
+        // id için set işlemi
+        data.setId(id);
 
         // kayıtlı herhangi bir depo var mı? yoksa zaten update işlemi yapılamaz
         boolean isAnyWarehouseExists = warehouseOperationService.isThereAnyOfThis();
@@ -96,7 +103,7 @@ public class WarehouseCRUDServiceImpl implements WarehouseCRUDService {
         if (warehouseStatus.equals("DELETED")) {
             // ürün var mı kontrolü yapıyoruz
             boolean thereAnyProductForThisWarehouse = warehouseOperationService.isThereAnyProductForThisWarehouse(data.getId());
-            if (thereAnyProductForThisWarehouse){
+            if (thereAnyProductForThisWarehouse) {
                 return new WarehouseAPIResponseHolder<>(HttpStatus.NO_CONTENT, WarehouseAPIResponseError
                         .builder()
                         .code("WAREHOUSE_HAVE_PRODUCTS")
@@ -106,7 +113,7 @@ public class WarehouseCRUDServiceImpl implements WarehouseCRUDService {
         }
 
         // güncelleme yaparken depo codu değiştirilirse ve aynı kod ile kayıtlı başka bir depo varsa kaydı güncelleme
-        boolean isExist = warehouseOperationService.hasExistSameCode(data.getCode());
+        boolean isExist = warehouseOperationService.hasExistSameCodeAndId(data.getId(), data.getCode());
         if (isExist) {
             return new WarehouseAPIResponseHolder<>(HttpStatus.NO_CONTENT, WarehouseAPIResponseError
                     .builder()
@@ -123,11 +130,13 @@ public class WarehouseCRUDServiceImpl implements WarehouseCRUDService {
     }
 
     @Override
-    public WarehouseAPIResponseHolder<?> delete(BaseIDDTO id) {
-
+    public WarehouseAPIResponseHolder<?> delete(Long id) {
         // ürün kontrolü yapıyoruz
-        boolean thereAnyProductForThisWarehouse = warehouseOperationService.isThereAnyProductForThisWarehouse(id.getId());
-        if (thereAnyProductForThisWarehouse){
+        BaseEntity baseEntity = new BaseEntity();
+        baseEntity.setId(id);
+        baseEntity.setUpdatedAt(new Date());
+        boolean thereAnyProductForThisWarehouse = warehouseOperationService.isThereAnyProductForThisWarehouse(id);
+        if (thereAnyProductForThisWarehouse) {
             return new WarehouseAPIResponseHolder<>(HttpStatus.NO_CONTENT, WarehouseAPIResponseError
                     .builder()
                     .code("WAREHOUSE_HAVE_PRODUCTS")
@@ -135,7 +144,7 @@ public class WarehouseCRUDServiceImpl implements WarehouseCRUDService {
                     .build());
         }
 
-        warehouseCRUDRepository.delete(id.getId());
+        warehouseCRUDRepository.delete(baseEntity);
         return new WarehouseAPIResponseHolder<>(HttpStatus.OK);
     }
 }

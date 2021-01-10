@@ -1,15 +1,10 @@
 package org.kodluyoruz.warehouseapi.model.dto;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Getter;
 import lombok.Setter;
-import org.kodluyoruz.warehouseapi.model.entites.WarehouseEntity;
 import org.kodluyoruz.warehouseapi.model.enums.ProductStatus;
 
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import java.math.BigDecimal;
-import java.util.Collection;
 
 @Getter
 @Setter

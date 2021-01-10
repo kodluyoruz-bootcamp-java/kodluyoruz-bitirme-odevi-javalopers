@@ -6,9 +6,10 @@ import org.kodluyoruz.warehouseapi.model.entites.ProductEntity;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class ProductsOperationRepositoryImpl extends AbstractBaseWarehouseAPIOperationRepository<ProductEntity, String >
+public class ProductsOperationRepositoryImpl extends AbstractBaseWarehouseAPIOperationRepository<ProductEntity>
         implements ProductsOperationRepository {
 
+    // product' un status' u deleted olarak işaretlendiği durumda o product stokta var mı diye kontrol
     @Override
     public boolean isThereAnyProductForThisId(Long productId) {
         Long result = getSession()

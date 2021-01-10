@@ -29,15 +29,14 @@ public class WarehouseCRUDController {
         return warehouseCRUDService.create(warehouseDTO);
     }
 
-    @PutMapping
-    public WarehouseAPIResponseHolder<WarehouseDTO> update(@RequestBody WarehouseDTO warehouseDTO) {
-        return warehouseCRUDService.update(warehouseDTO);
+    @PutMapping("/{id}")
+    public WarehouseAPIResponseHolder<WarehouseDTO> update(@PathVariable Long id, @RequestBody WarehouseDTO warehouseDTO) {
+        return warehouseCRUDService.update(id, warehouseDTO);
     }
 
-    @DeleteMapping
-    public WarehouseAPIResponseHolder<?> delete(@RequestBody BaseIDDTO id) {
+    @DeleteMapping("/{id}")
+    public WarehouseAPIResponseHolder<?> delete(@PathVariable Long id) {
         return warehouseCRUDService.delete(id);
     }
-
 }
 

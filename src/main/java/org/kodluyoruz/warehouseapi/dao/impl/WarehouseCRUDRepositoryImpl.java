@@ -7,6 +7,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public class WarehouseCRUDRepositoryImpl extends
-        AbstractBaseWarehouseAPIRepository<WarehouseEntity, Long> implements WarehouseCRUDRepository {
+        AbstractBaseWarehouseAPIRepository<WarehouseEntity> implements WarehouseCRUDRepository {
 
 }

@@ -6,8 +6,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Collection;
 
 @Transactional(readOnly = true)
-public abstract class AbstractBaseWarehouseAPIRepository<T extends BaseEntity, ID extends Long> extends AbstractBaseEntityManager<T>
-        implements WarehouseAPICRUDBaseRepository<T, ID> {
+public abstract class AbstractBaseWarehouseAPIRepository<T extends BaseEntity> extends AbstractBaseEntityManager<T>
+        implements WarehouseAPICRUDBaseRepository<T> {
 
     @Override
     public Collection<T> list() {
@@ -38,10 +38,11 @@ public abstract class AbstractBaseWarehouseAPIRepository<T extends BaseEntity, I
     // delete işleminde datalar fiziksel olarak silinmez. status bilgisini deleted' a çekiyoruz. o id' ye sahip olan nesne için
     @Override
     @Transactional
-    public void delete(ID id) {
+    public void delete(BaseEntity baseEntity) {
         getSession()
-                .createQuery("update " + entity.getName() + " set status = 'DELETED' where id=:entityId")
-                .setParameter("entityId", id)
+                .createQuery("update " + entity.getName() + " set status = 'DELETED', updated_date=:date where id=:entityId")
+                .setParameter("entityId", baseEntity.getId())
+                .setParameter("date",baseEntity.getUpdatedAt())
                 .executeUpdate();
     }
 }

@@ -10,7 +10,7 @@ public interface WarehouseAPICRUDBaseService<T extends BaseIDDTO> {
 
     WarehouseAPIResponseHolder<T> create(T data);
 
-    WarehouseAPIResponseHolder<T> update(T data);
+    WarehouseAPIResponseHolder<T> update(Long id, T data);
 
-    WarehouseAPIResponseHolder<?> delete(BaseIDDTO data);
+    WarehouseAPIResponseHolder<?> delete(Long id);
 }
