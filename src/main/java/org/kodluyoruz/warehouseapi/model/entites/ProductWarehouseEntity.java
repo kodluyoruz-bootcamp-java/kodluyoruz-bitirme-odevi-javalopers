@@ -3,29 +3,29 @@ package org.kodluyoruz.warehouseapi.model.entites;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.kodluyoruz.warehouseapi.embeddable.ProductWarehouseId;
+import org.kodluyoruz.warehouseapi.model.entites.embeddable.ProductWarehouseId;
 import javax.persistence.*;
 import java.util.Date;
 
-@Entity
+@Entity(name = "product_warehouse")
 @Getter
 @Setter
 @NoArgsConstructor
 @Table(name = "PRODUCT_WAREHOUSE")
-public class ProductWarehouse {
+public class ProductWarehouseEntity {
 
     @EmbeddedId
     private ProductWarehouseId productWarehouseId;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @MapsId("warehouseId")
-    @JoinColumn(name = "warehouseId")
-    WarehouseEntity warehouseEntity;
+    @JoinColumn(name = "warehouse_id")
+    private WarehouseEntity warehouseEntity;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @MapsId("productId")
-    @JoinColumn(name = "productId")
-    ProductEntity productEntity;
+    @JoinColumn(name = "product_id")
+    private ProductEntity productEntity;
 
     @Column(name = "STOCK_AMOUNT", precision = 19, scale = 2, nullable = false)
     private Long stockAmount = Long.valueOf(0);

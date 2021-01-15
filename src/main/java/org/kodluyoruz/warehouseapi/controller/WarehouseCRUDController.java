@@ -46,4 +46,3 @@ public class WarehouseCRUDController {
         return warehouseOperationService.transferAllProducts(fromWarehouseId,toWarehouseId);
     }
 }
-

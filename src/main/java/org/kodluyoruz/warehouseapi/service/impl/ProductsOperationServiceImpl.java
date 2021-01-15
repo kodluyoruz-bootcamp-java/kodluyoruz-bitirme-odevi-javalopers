@@ -29,7 +29,12 @@ public class ProductsOperationServiceImpl implements ProductsOperationService {
     }
 
     @Override
-    public boolean isThereAnyProductForThisId(Long productId) {
-        return productsOperationRepository.isThereAnyProductForThisId(productId);
+    public boolean isThereAnyProductForThisIdInStock(Long productId) {
+        return productsOperationRepository.isThereAnyProductForThisIdInStock(productId);
+    }
+
+    @Override
+    public boolean isThereAnyActiveEntryAtThisId(Long id) {
+        return productsOperationRepository.isThereAnyActiveEntryAtThisId(id);
     }
 }

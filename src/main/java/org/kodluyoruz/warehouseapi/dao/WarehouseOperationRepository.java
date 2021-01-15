@@ -1,14 +1,19 @@
 package org.kodluyoruz.warehouseapi.dao;
 
-import org.kodluyoruz.warehouseapi.base.WarehouseAPIOperationBaseRepository;
+import org.kodluyoruz.warehouseapi.base.WarehouseAndProductOperationBaseRepository;
+import org.kodluyoruz.warehouseapi.base.WarehouseAndStockOperationBaseRepository;
+import org.kodluyoruz.warehouseapi.model.entites.ProductWarehouseEntity;
 import org.kodluyoruz.warehouseapi.model.entites.WarehouseEntity;
 
+import java.util.Collection;
 
-public interface WarehouseOperationRepository extends WarehouseAPIOperationBaseRepository<WarehouseEntity> {
+
+public interface WarehouseOperationRepository extends WarehouseAndProductOperationBaseRepository<WarehouseEntity>, WarehouseAndStockOperationBaseRepository {
 
     boolean isThereAnyProductForThisWarehouse(Long warehouseId);
 
-    boolean isThereAnyActiveWarehouseAtThisId(Long id);
+    Collection<ProductWarehouseEntity> getStocksFromThisWarehouse(Long warehouseId);
 
-    void transferAllProducts(Long fromWarehouseId, Long toWarehouseId);
+    void deleteEntryWithTheseIds(Long productId, Long warehouseId);
+
 }

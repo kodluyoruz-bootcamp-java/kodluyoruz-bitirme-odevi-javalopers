@@ -112,7 +112,7 @@ public class ProductCRUDServiceImpl implements ProductCRUDService {
         // Status deleted işaretlenmişse depoda ürün varsa deleted işaretleme yapılmamalı
         String warehouseStatus = data.getStatus().toString();
         if (warehouseStatus.equals("DELETED")) {
-            boolean thereAnyProductForThisId = productsOperationService.isThereAnyProductForThisId(data.getId());
+            boolean thereAnyProductForThisId = productsOperationService.isThereAnyProductForThisIdInStock(data.getId());
             if (thereAnyProductForThisId) {
                 return new WarehouseAPIResponseHolder<>(HttpStatus.NO_CONTENT, WarehouseAPIResponseError
                         .builder()
@@ -144,7 +144,7 @@ public class ProductCRUDServiceImpl implements ProductCRUDService {
         // Ürün silinmeden önce mutlaka stok bilgisine bakılmalı.
         // Depolar içerisinde ilgili ürüne ait stoğu 0'dan büyük bir kayıt var ise ürün silinmemeli ve hata fırlatılmalı
 
-        boolean thereAnyProductForThisId = productsOperationService.isThereAnyProductForThisId(id);
+        boolean thereAnyProductForThisId = productsOperationService.isThereAnyProductForThisIdInStock(id);
         if (thereAnyProductForThisId) {
             return new WarehouseAPIResponseHolder<>(HttpStatus.NO_CONTENT, WarehouseAPIResponseError
                     .builder()

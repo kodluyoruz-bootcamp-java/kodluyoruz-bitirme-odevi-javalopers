@@ -5,18 +5,22 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.kodluyoruz.warehouseapi.model.enums.ProductStatus;
+import org.kodluyoruz.warehouseapi.model.enums.StatusEnum;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.Collection;
+import java.util.Set;
 
-@Entity
+@Entity(name = "product")
 @Getter
 @Setter
 @NoArgsConstructor
 @Table(name = "PRODUCT")
 public class ProductEntity extends BaseEntity {
+
+    @OneToMany(mappedBy = "productEntity",cascade = CascadeType.ALL)
+    Set<ProductWarehouseEntity> productWarehouseEntitySet;
 
     @Column(name = "CODE", unique = true, length = 50, nullable = false)
     private String code;
@@ -38,9 +42,9 @@ public class ProductEntity extends BaseEntity {
 
     @Enumerated(value = EnumType.STRING)
     @Column(name = "STATUS", length = 7, nullable = false)
-    private ProductStatus status = ProductStatus.ACTIVE;
+    private StatusEnum status = StatusEnum.ACTIVE;
 
     @JsonBackReference
     @OneToMany(mappedBy = "productEntity")
-    private Collection<ProductWarehouse> productWarehouses;
+    private Collection<ProductWarehouseEntity> productWarehouseEntities;
 }

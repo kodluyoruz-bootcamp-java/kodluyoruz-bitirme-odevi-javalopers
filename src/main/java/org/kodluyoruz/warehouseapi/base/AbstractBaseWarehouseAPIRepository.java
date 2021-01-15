@@ -1,7 +1,7 @@
 package org.kodluyoruz.warehouseapi.base;
 
 import org.kodluyoruz.warehouseapi.model.entites.BaseEntity;
-import org.kodluyoruz.warehouseapi.model.enums.WarehouseStatusEnum;
+import org.kodluyoruz.warehouseapi.model.enums.StatusEnum;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
@@ -13,8 +13,10 @@ public abstract class AbstractBaseWarehouseAPIRepository<T extends BaseEntity> e
 
     @Override
     public Collection<T> list() {
-        return getSession().createQuery("from " +
-                entity.getName() + " where status = 'ACTIVE'", entity).getResultList();
+        return getSession()
+                .createQuery("from " + entity.getName() + " where status=:status", entity)
+                .setParameter("status", StatusEnum.ACTIVE)
+                .getResultList();
     }
 
     /**
@@ -44,7 +46,7 @@ public abstract class AbstractBaseWarehouseAPIRepository<T extends BaseEntity> e
         getSession()
                 .createQuery("update " + entity.getName() + " set status =:newStatus, updated_date=:date where id=:entityId")
                 .setParameter("entityId", id)
-                .setParameter("newStatus", WarehouseStatusEnum.DELETED)
+                .setParameter("newStatus", StatusEnum.DELETED)
                 .setParameter("date", new Date())
                 .executeUpdate();
     }
