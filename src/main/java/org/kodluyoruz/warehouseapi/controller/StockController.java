@@ -35,5 +35,10 @@ public class StockController {
         return stockOperationService.getSummaries();
     }
 
+    @PostMapping("/add")
+    public WarehouseAPIResponseHolder<?> addNewStock(@RequestBody ProductWarehouseDTO productWarehouseDTO){
+        return stockOperationService.addNewStock(productWarehouseDTO);
+    }
+
 
 }

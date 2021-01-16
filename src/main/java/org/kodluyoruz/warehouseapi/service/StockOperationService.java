@@ -15,4 +15,6 @@ public interface StockOperationService extends WarehouseAndStockOperationBaseSer
     Long getStockOfGivenProductFromThisWarehouse(Long productId, Long warehouseId);
 
     WarehouseAPIResponseHolder<Collection<Summary>> getSummaries();
+
+    WarehouseAPIResponseHolder<?> addNewStock(ProductWarehouseDTO productWarehouseDTO);
 }

@@ -181,4 +181,62 @@ public class StockOperationServiceImpl implements StockOperationService {
         return new WarehouseAPIResponseHolder<>(summaries, HttpStatus.OK);
     }
 
+    @Override
+    public WarehouseAPIResponseHolder<?> addNewStock(ProductWarehouseDTO productWarehouseDTO) {
+
+        // ilgili ürün product tablosunda var mı ve aktif mi?
+        boolean isThereaActiveProductWithThisId = productsOperationService.isThereAnyActiveEntryAtThisId(productWarehouseDTO.getProductWarehouseId().getProductId());
+
+        // ilgili ürün product tablosunda yoksa veya aktif dğeilse hata fırlat
+        if (!isThereaActiveProductWithThisId) {
+            return new WarehouseAPIResponseHolder<>(HttpStatus.NO_CONTENT, WarehouseAPIResponseError
+                    .builder()
+                    .code("NO_PRODUCT")
+                    .message("A product with this id was not found or product is not active. You cannot add an inactive product to stock.")
+                    .build());
+        }
+
+        // ilgili warehouse, warehosue tablosunda var mı ve aktif mi?
+        boolean isThereaActiveWarehouseWithThisId = warehouseOperationService.isThereAnyActiveEntryAtThisId(productWarehouseDTO.getProductWarehouseId().getWarehouseId());
+
+        // ilgili warehouse, warehouse tablosunda yoksa veya aktif dğeilse hata fırlat
+        if (!isThereaActiveWarehouseWithThisId) {
+            return new WarehouseAPIResponseHolder<>(HttpStatus.NO_CONTENT, WarehouseAPIResponseError
+                    .builder()
+                    .code("NO_PRODUCT")
+                    .message("A warehouse with this id was not found or warehouse is not active.You cannot add stock to an inactive warehouse.")
+                    .build());
+        }
+
+        // ilgili ürün ilgili depoda var mı
+        boolean isThereAnEntry = doesThisWarehouseHaveStockOfThisProduct(productWarehouseDTO.getProductWarehouseId().getProductId(),
+                productWarehouseDTO.getProductWarehouseId().getWarehouseId());
+
+        // ilgili ürün ilgili depoda varsa bu yeni bir ürün sotğu girilme işlemi değil güncelleme işlemidir. güncelleme üzerinden yapılmalıdır
+        if (isThereAnEntry) {
+            return new WarehouseAPIResponseHolder<>(HttpStatus.NO_CONTENT, WarehouseAPIResponseError
+                    .builder()
+                    .code("DUPLICATE_DATA")
+                    .message("This product is already in stock at this warehouse. You cannot add a stock of an added product as a new record. " +
+                            "If you want to update the stock quantity, please use the update process.")
+                    .build());
+        }
+
+        // Ürüne ait yeni stock miktarı 0'dan küçük olmamalı.
+        if (productWarehouseDTO.getStockAmount() < 0) {
+            return new WarehouseAPIResponseHolder<>(HttpStatus.NO_CONTENT, WarehouseAPIResponseError
+                    .builder()
+                    .code("WRONG_VALUE")
+                    .message("Product stock quantity cannot be less than zero.")
+                    .build());
+        }
+
+
+        ProductWarehouseEntity productWarehouseEntity = productWarehouseDTOToProductWarehouseEntityConverter.convert(productWarehouseDTO);
+        stockOperationRepository.addThisStockAsNewRecord(productWarehouseEntity.getProductWarehouseId().getProductId(),
+                productWarehouseEntity.getProductWarehouseId().getWarehouseId(),productWarehouseEntity.getStockAmount(),
+                new Date(),productWarehouseEntity.getCreatedBy());
+        return new WarehouseAPIResponseHolder<>(HttpStatus.OK);
+    }
+
 }
