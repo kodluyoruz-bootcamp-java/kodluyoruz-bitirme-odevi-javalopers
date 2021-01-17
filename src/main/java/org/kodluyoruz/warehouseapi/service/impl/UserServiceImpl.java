@@ -6,18 +6,13 @@ import org.kodluyoruz.warehouseapi.converter.UserDTOToUserEntityConverter;
 import org.kodluyoruz.warehouseapi.dao.UserRepository;
 import org.kodluyoruz.warehouseapi.model.dto.UserDTO;
 import org.kodluyoruz.warehouseapi.model.entites.MyUserDetails;
-import org.kodluyoruz.warehouseapi.model.entites.RoleEntity;
 import org.kodluyoruz.warehouseapi.model.entites.UserEntity;
 import org.kodluyoruz.warehouseapi.model.enums.StatusEnum;
 import org.kodluyoruz.warehouseapi.service.UserService;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.util.Collection;
 
 @Service
 @RequiredArgsConstructor

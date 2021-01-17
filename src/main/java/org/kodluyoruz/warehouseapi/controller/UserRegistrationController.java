@@ -31,20 +31,4 @@ public class UserRegistrationController {
         return "redirect:/registration?success";
     }
 
-    /*private final BCryptPasswordEncoder bCryptPasswordEncoder;
-    private final UserRepository userCRUDRepository;
-
-    @PostMapping("/register")
-    public String addUser(@RequestBody UserEntity userEntity){
-        String password = userEntity.getPassword();
-        String encryptedPassword = bCryptPasswordEncoder.encode(password);
-        userEntity.setPassword(encryptedPassword);
-        userCRUDRepository.save(userEntity);
-        return "User added succesfully";
-    }
-
-    @PostMapping("/login")
-    public WarehouseAPIResponseHolder<?> login(@RequestBody UserEntity userEntity){
-        return null;
-    }*/
 }

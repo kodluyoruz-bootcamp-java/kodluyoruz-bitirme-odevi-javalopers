@@ -2,11 +2,9 @@ package org.kodluyoruz.warehouseapi.converter;
 
 import org.kodluyoruz.warehouseapi.base.WarehouseAPIConverter;
 import org.kodluyoruz.warehouseapi.model.dto.UserDTO;
-import org.kodluyoruz.warehouseapi.model.entites.RoleEntity;
 import org.kodluyoruz.warehouseapi.model.entites.UserEntity;
 import org.springframework.stereotype.Component;
 
-import java.util.Arrays;
 import java.util.Date;
 import java.util.Objects;
 
@@ -23,7 +21,6 @@ public class UserDTOToUserEntityConverter implements WarehouseAPIConverter<UserD
         userEntity.setStatus(input.getStatus());
         userEntity.setCreatedAt(Objects.isNull(input.getCreatedAt()) ? new Date() : input.getCreatedAt());
         userEntity.setUpdatedAt(input.getUpdatedAt());
-        userEntity.setRoleEntities(Arrays.asList(new RoleEntity()));
 
         return userEntity;
     }
