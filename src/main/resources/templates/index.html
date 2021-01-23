@@ -12,13 +12,18 @@
     <!-- Bootstrap CSS -->
     <link rel="stylesheet"
           href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
-          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous"/>
+
+    <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"/>
+
+    <link th:href="@{/css/style.css}" rel="stylesheet"/>
+
 </head>
 <body>
 
 <!-- create navigation bar ( header) -->
 <nav class="navbar navbar-inverse navbar-fixed-top">
-    <div class="container">
+    <div>
         <div class="navbar-header">
             <button type="button" class="navbar-toggle collapsed"
                     data-toggle="collapse" data-target="#navbar" aria-expanded="false"
@@ -41,8 +46,46 @@
 <br>
 
 <div class="container">
-    <h1>Home Page</h1>
+    <!--<h1>Home Page</h1>
     <h3>Welcome <span sec:authentication="principal.username"></span> </h3>
+    <div class="form-group">
+        <span>Click to view the warehouses<a href="/" th:href="@{/warehouses}">Depolar</a></span>
+    </div>-->
+
+    <div class="box">
+        <div class="icon">
+            <img th:src="@{images/warehouse.png}" src="../static/images/warehouse.png" class="imgs"/>
+        </div>
+        <div class="content">
+            <h2>Warehouses</h2>
+            <p>Warehouse listing, adding, updating, deleting and transfer operations</p>
+            <!--<a href="/" th:href="@{/warehouses}">Warehouses</a>-->
+            <input type="button" style="width: 100%" onclick="window.open('warehouses','_self','resizable=yes')" value="Go to Warehouses"/>
+        </div>
+    </div>
+
+    <div class="box">
+        <div class="icon">
+            <img th:src="@{images/product.png}" src="../static/images/product.png" class="imgs"/>
+        </div>
+        <div class="content">
+            <h2>Products</h2>
+            <p>Products listing, adding, updating and deleting operations</p>
+            <input type="button" style="width: 100%" onclick="window.open('products','_self','resizable=yes')" value="Go to Products"/>
+        </div>
+    </div>
+
+    <div class="box">
+        <div class="icon">
+            <img th:src="@{images/stock.png}" src="../static/images/stock.png" class="imgs"/>
+        </div>
+        <div class="content">
+            <h2>Stocks</h2>
+            <p>Stocks listing, updating, transfer and summary operations</p>
+            <input type="button" style="width: 100%" onclick="window.open('stocks','_self','resizable=yes')" value="Go to Stocks"/>
+        </div>
+    </div>
+
 </div>
 </body>
 </html>

@@ -8,8 +8,10 @@ import org.kodluyoruz.warehouseapi.converter.ProductDTOToProductEntityConverter;
 import org.kodluyoruz.warehouseapi.converter.ProductEntityToProductDTOConverter;
 import org.kodluyoruz.warehouseapi.dao.ProductCRUDRepository;
 import org.kodluyoruz.warehouseapi.model.dto.ProductDTO;
+import org.kodluyoruz.warehouseapi.model.dto.WarehouseDTO;
 import org.kodluyoruz.warehouseapi.model.entites.BaseEntity;
 import org.kodluyoruz.warehouseapi.model.entites.ProductEntity;
+import org.kodluyoruz.warehouseapi.model.entites.WarehouseEntity;
 import org.kodluyoruz.warehouseapi.service.ProductCRUDService;
 import org.kodluyoruz.warehouseapi.service.ProductsOperationService;
 import org.springframework.http.HttpStatus;
@@ -43,6 +45,20 @@ public class ProductCRUDServiceImpl implements ProductCRUDService {
                 .map(productEntityToProductDTOConverter::convert)
                 .collect(Collectors.toList());
         return new WarehouseAPIResponseHolder<>(productDTOList, HttpStatus.OK);
+    }
+
+    @Override
+    public WarehouseAPIResponseHolder<ProductDTO> getById(Long id) {
+        ProductEntity productEntity = productCRUDRepository.getById(id);
+        if (productEntity == null) {
+            return new WarehouseAPIResponseHolder<>(HttpStatus.NOT_FOUND, WarehouseAPIResponseError
+                    .builder()
+                    .code("DATA_NOT_FOUND")
+                    .message("No record found in the database.")
+                    .build());
+        }
+        ProductDTO productDTO = productEntityToProductDTOConverter.convert(productEntity);
+        return new WarehouseAPIResponseHolder<>(productDTO, HttpStatus.OK);
     }
 
     @Override

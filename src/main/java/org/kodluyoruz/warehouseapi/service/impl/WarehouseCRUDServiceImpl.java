@@ -9,6 +9,7 @@ import org.kodluyoruz.warehouseapi.converter.WarehouseEntityToWarehouseDTOConver
 import org.kodluyoruz.warehouseapi.dao.WarehouseCRUDRepository;
 import org.kodluyoruz.warehouseapi.model.dto.WarehouseDTO;
 import org.kodluyoruz.warehouseapi.model.entites.WarehouseEntity;
+import org.kodluyoruz.warehouseapi.model.enums.StatusEnum;
 import org.kodluyoruz.warehouseapi.service.WarehouseCRUDService;
 import org.kodluyoruz.warehouseapi.service.WarehouseOperationService;
 import org.springframework.http.HttpStatus;
@@ -50,16 +51,30 @@ public class WarehouseCRUDServiceImpl implements WarehouseCRUDService {
     }
 
     @Override
-    public WarehouseAPIResponseHolder<WarehouseDTO> create(WarehouseDTO data) {
-        if (Objects.isNull(data)) {
+    public WarehouseAPIResponseHolder<WarehouseDTO> getById(Long id) {
+        WarehouseEntity warehouseEntity = warehouseCRUDRepository.getById(id);
+        if (warehouseEntity == null) {
+            return new WarehouseAPIResponseHolder<>(HttpStatus.NOT_FOUND, WarehouseAPIResponseError
+                    .builder()
+                    .code("DATA_NOT_FOUND")
+                    .message("No record found in the database.")
+                    .build());
+        }
+        WarehouseDTO warehouseDTO = warehouseEntityToWarehouseDTOConverter.convert(warehouseEntity);
+        return new WarehouseAPIResponseHolder<>(warehouseDTO, HttpStatus.OK);
+    }
+
+    @Override
+    public WarehouseAPIResponseHolder<WarehouseDTO> create(WarehouseDTO warehouseDTO) {
+        if (Objects.isNull(warehouseDTO)) {
             return new WarehouseAPIResponseHolder<>(HttpStatus.NO_CONTENT);
         }
-        String warehouseName = data.getName();
+        String warehouseName = warehouseDTO.getName();
 
         if (warehouseName.isEmpty()) {
             return new WarehouseAPIResponseHolder<>(HttpStatus.NO_CONTENT);
         }
-        boolean isWarehouseCodeExist = warehouseOperationService.hasExistSameCode(data.getCode());
+        boolean isWarehouseCodeExist = warehouseOperationService.hasExistSameCode(warehouseDTO.getCode());
 
         // bunları validatorlerle yapmalı
         if (isWarehouseCodeExist) {
@@ -70,7 +85,9 @@ public class WarehouseCRUDServiceImpl implements WarehouseCRUDService {
                     .build());
         }
 
-        WarehouseEntity warehouseEntity = warehouseDTOToWarehouseEntityConverter.convert(data);
+        warehouseDTO.setStatus(StatusEnum.ACTIVE);
+
+        WarehouseEntity warehouseEntity = warehouseDTOToWarehouseEntityConverter.convert(warehouseDTO);
         warehouseCRUDRepository.create(warehouseEntity); // create ettikten sonra aşağıda geri döndürmek için tekrar DTO' ya çevireceğiz
 
         return new WarehouseAPIResponseHolder<>(warehouseEntityToWarehouseDTOConverter

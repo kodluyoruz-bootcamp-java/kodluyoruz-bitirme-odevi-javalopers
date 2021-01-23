@@ -8,6 +8,8 @@ public interface WarehouseAPICRUDBaseRepository<T extends BaseEntity> {
 
     Collection<T> list();
 
+    T getById(Long id);
+
     T create(T entity);
 
     T update(T entity);

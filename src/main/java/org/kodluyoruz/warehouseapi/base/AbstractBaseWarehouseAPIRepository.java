@@ -19,6 +19,14 @@ public abstract class AbstractBaseWarehouseAPIRepository<T extends BaseEntity> e
                 .getResultList();
     }
 
+    @Override
+    public T getById(Long id) {
+        return getSession()
+                .createQuery("from " + entity.getName() + " where id=:id", entity)
+                .setParameter("id", id)
+                .getSingleResult();
+    }
+
     /**
      * persist metodu ilgili entity' yi database' e kayıt etmemize yarıyor. herhangi bir obje alır. bu bir entity ise
      * ilgili tabloyu bulur ve o nesneyi kayıt eder. database' de create, update ve delete metodları için transactional açılması

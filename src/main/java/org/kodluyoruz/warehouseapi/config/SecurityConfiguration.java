@@ -1,6 +1,5 @@
 package org.kodluyoruz.warehouseapi.config;
 
-import lombok.RequiredArgsConstructor;
 import org.kodluyoruz.warehouseapi.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -43,8 +42,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         http.authorizeRequests().antMatchers(
                 "/registration**",
                 "/js/**",
-                "/css/**",
-                "/img/**").permitAll()
+                "/static/css/**",
+                "/static/images/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()
