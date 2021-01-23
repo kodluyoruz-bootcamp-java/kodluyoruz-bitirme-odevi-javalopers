@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.kodluyoruz.warehouseapi.base.WarehouseAPIResponseHolder;
 import org.kodluyoruz.warehouseapi.config.SwaggerClient;
 import org.kodluyoruz.warehouseapi.model.dto.WarehouseDTO;
+import org.kodluyoruz.warehouseapi.model.enums.StatusEnum;
 import org.kodluyoruz.warehouseapi.service.WarehouseCRUDService;
 import org.kodluyoruz.warehouseapi.service.WarehouseOperationService;
 import org.springframework.stereotype.Controller;
@@ -22,15 +23,26 @@ public class WarehouseCRUDController {
 
     @GetMapping
     public String getAllWarehouses(Model model) {
-        //warehouseCRUDService.list();
         model.addAttribute("listOfWarehouses",warehouseCRUDService.list().getResponseData());
         return "warehouses";
     }
 
-    @PostMapping("/add")
+    @GetMapping("/create")
+    public String showCreateForm(){
+        return "add_form";
+    }
+
+    @PostMapping("/create")
     public String create(@ModelAttribute("warehouse") WarehouseDTO warehouseDTO) {
         warehouseCRUDService.create(warehouseDTO);
         return "redirect:/warehouses";
+    }
+
+    @GetMapping("/update/{id}")
+    public String showEditForm(@ModelAttribute("warehouse") @PathVariable Long id, Model model) {
+        model.addAttribute("warehouse", warehouseCRUDService.getById(id).getResponseData());
+        model.addAttribute("statuses", StatusEnum.values());
+        return "edit_form";
     }
 
     @PostMapping("/update/{id}")
@@ -51,15 +63,11 @@ public class WarehouseCRUDController {
         return warehouseOperationService.transferAllProducts(fromWarehouseId,toWarehouseId);
     }
 
-    @GetMapping("/create")
-    public String showNewWarehouseForm(Model model){
-        model.addAttribute("warehouse",new WarehouseDTO());
-        return "create_warehouse";
-    }
+/*
 
     @GetMapping("/edit/{id}")
     public String showFormForUpdate(@PathVariable Long id, Model model){
         model.addAttribute("warehouse", warehouseCRUDService.getById(id).getResponseData());
         return "update_warehouse";
-    }
+    }*/
 }

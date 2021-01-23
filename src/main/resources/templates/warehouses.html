@@ -1,67 +1,77 @@
-<!DOCTYPE html >
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:th="http://thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="master">
 <head>
-    <meta charset="UTF-8">
-    <title>Warehouse Management System</title>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet"
-          href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
-          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous"/>
-
-    <link th:href="@{/css/table.css}" rel="stylesheet"/>
-
+    <title>Warehouses</title>
 </head>
 <body>
-
-
-<!-- create nav bar (header)-->
-<nav class="navbar navbar-inverse navbar-fixed-top">
-    <div class="container">
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"
-                    aria-expanded="false" aria-controls="navbar">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand" href="#" th:href="@{/}">Warehouse Management System</a>
+<div layout:fragment="content">
+    <div>
+        <div class="row">
+            <div class="col-md-12">
+                <button type="button" class="btn btn-primary  open-modal"
+                        data-remote="/warehouses/create">Add New
+                </button>
+            </div>
         </div>
+        <div class="row">
+            <div class="col-md-12">
+                <table class="table table-striped table-bordered table-hover small" id="warehouses">
+                    <thead class="thead-dark">
+                    <tr>
+                        <th style="width: 25px;">ID</th>
+                        <th style="width: 100px;">Code</th>
+                        <th style="width: 200px;">Name</th>
+                        <th style="width: 50px;">Status</th>
+                        <th style="width: 25px;">Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="warehouse : ${listOfWarehouses}">
+                        <td th:text="${warehouse.id}"></td>
+                        <td th:text="${warehouse.code}"></td>
+                        <td th:text="${warehouse.name}"></td>
+                        <td th:text="${warehouse.status}"></td>
+                        <td>
+                            <a href="javascript:void(0);"
+                               data-placement="top" title="Update" data-toggle="tooltip"
+                               th:attr="data-remote=@{/warehouses/update/{id}(id=${warehouse.id})}"
+                               class="btn btn-primary open-modal">
+                                <i class="fa fa-pencil"  ></i>
+                            </a>
+                            <a href="javascript:void(0);"
+                               id="delete-warehouse"
+                               data-placement="top" title="Delete" data-toggle="tooltip"
+                               th:attr="data-remote=@{/warehouses/delete/{id}(id=${warehouse.id})}"
+                               class="btn btn-danger">
+                                <i class="fa fa-trash"  ></i>
+                            </a>
+                        </td>
+                    </tr>
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
     </div>
-</nav>
-
-<br><br><br>
-
-<div class="container my-2">
-    <h1 align="center">Warehouse List</h1>
-    <a th:href="@{/warehouses/create}" style="width: 100%" class="btn btn-primary btn-sm mb-3"> CREATE WAREHOUSE</a>
-    <table>
-        <thead>
-        <tr>
-            <th>ID</th>
-            <th>Code</th>
-            <th>Name</th>
-            <th>Status</th>
-            <th>Actions</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="warehouse : ${listOfWarehouses}">
-            <td th:text="${warehouse.id}"></td>
-            <td th:text="${warehouse.code}"></td>
-            <td th:text="${warehouse.name}"></td>
-            <td th:text="${warehouse.status}"></td>
-            <td><a th:href="@{/warehouses/edit/{id}(id=${warehouse.id})}" class="btn btn-primary" th:method="get">UPDATE</a>
-                <a th:href="@{/warehouses/delete/{id}(id=${warehouse.id})}" class="btn btn-danger" th:method="get">DELETE</a>
-            </td>
-        </tr>
-        </tbody>
-    </table>
 </div>
+<div layout:fragment="custom_js">
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#warehouses').DataTable();
 
+            $('.open-modal').on('click',function (event) {
+                var button = $(this);
+                $.get(button.data('remote'),function (response) {
+                    setContentModal(response);
+                    showmodal();
+                })
+            });
+
+        });
+    </script>
+</div>
 </body>
+
+
 </html>
