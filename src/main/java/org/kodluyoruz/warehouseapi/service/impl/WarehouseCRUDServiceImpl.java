@@ -13,9 +13,11 @@ import org.kodluyoruz.warehouseapi.model.enums.StatusEnum;
 import org.kodluyoruz.warehouseapi.service.WarehouseCRUDService;
 import org.kodluyoruz.warehouseapi.service.WarehouseOperationService;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import javax.validation.Valid;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -65,37 +67,46 @@ public class WarehouseCRUDServiceImpl implements WarehouseCRUDService {
     }
 
     @Override
-    public WarehouseAPIResponseHolder<WarehouseDTO> create(WarehouseDTO warehouseDTO) {
-        if (Objects.isNull(warehouseDTO)) {
-            return new WarehouseAPIResponseHolder<>(HttpStatus.NO_CONTENT);
-        }
-        String warehouseName = warehouseDTO.getName();
+    public ResponseEntity<WarehouseAPIResponseHolder<WarehouseDTO>> create(WarehouseDTO warehouseDTO) {
 
-        if (warehouseName.isEmpty()) {
-            return new WarehouseAPIResponseHolder<>(HttpStatus.NO_CONTENT);
+        if (Objects.isNull(warehouseDTO)) {
+            return ResponseEntity.badRequest().body(new WarehouseAPIResponseHolder<>(HttpStatus.BAD_REQUEST, WarehouseAPIResponseError
+                    .builder()
+                    .code("400")
+                    .message("Bilgileri kontrol ediniz.")
+                    .build()));
         }
+
+
+        if (warehouseDTO.getName().isEmpty() || warehouseDTO.getCode().isEmpty()) {
+            return ResponseEntity.badRequest().body(new WarehouseAPIResponseHolder<>(HttpStatus.BAD_REQUEST, WarehouseAPIResponseError
+                    .builder()
+                    .code("400")
+                    .message("Name ve code alanları boş olamaz.")
+                    .build()));
+        }
+
         boolean isWarehouseCodeExist = warehouseOperationService.hasExistSameCode(warehouseDTO.getCode());
 
         // bunları validatorlerle yapmalı
         if (isWarehouseCodeExist) {
-            return new WarehouseAPIResponseHolder<>(HttpStatus.NO_CONTENT, WarehouseAPIResponseError
+            return ResponseEntity.badRequest().body(new WarehouseAPIResponseHolder<>(HttpStatus.NO_CONTENT, WarehouseAPIResponseError
                     .builder()
-                    .code("DUPLICATE_DATA")
+                    .code("400")
                     .message("You can not insert with same Warehouse Code")
-                    .build());
+                    .build()));
         }
-
-        warehouseDTO.setStatus(StatusEnum.ACTIVE);
 
         WarehouseEntity warehouseEntity = warehouseDTOToWarehouseEntityConverter.convert(warehouseDTO);
         warehouseCRUDRepository.create(warehouseEntity); // create ettikten sonra aşağıda geri döndürmek için tekrar DTO' ya çevireceğiz
 
-        return new WarehouseAPIResponseHolder<>(warehouseEntityToWarehouseDTOConverter
-                .convert(warehouseEntity), HttpStatus.OK);
+        return ResponseEntity.ok().body(new WarehouseAPIResponseHolder<>(warehouseEntityToWarehouseDTOConverter
+                .convert(warehouseEntity), HttpStatus.OK));
+
     }
 
     @Override
-    public WarehouseAPIResponseHolder<WarehouseDTO> update(Long id, WarehouseDTO data) {
+    public ResponseEntity<WarehouseAPIResponseHolder<WarehouseDTO>> update(Long id, WarehouseDTO data) {
 
         // id için set işlemi
         data.setId(id);
@@ -103,11 +114,12 @@ public class WarehouseCRUDServiceImpl implements WarehouseCRUDService {
         // kayıtlı herhangi bir depo var mı? yoksa zaten update işlemi yapılamaz
         boolean isAnyWarehouseExists = warehouseOperationService.isThereAnyOfThis();
         if (!isAnyWarehouseExists) {
-            return new WarehouseAPIResponseHolder<>(HttpStatus.NO_CONTENT, WarehouseAPIResponseError
+
+            return ResponseEntity.badRequest().body(new WarehouseAPIResponseHolder<>(HttpStatus.BAD_REQUEST, WarehouseAPIResponseError
                     .builder()
                     .code("NO_DATA")
                     .message("Sorry,There is no warehouse.")
-                    .build());
+                    .build()));
         }
 
         // status deleted seçilmişse ve depoda ürün varsa işlemi gerçekleştirme
@@ -116,45 +128,50 @@ public class WarehouseCRUDServiceImpl implements WarehouseCRUDService {
             // ürün var mı kontrolü yapıyoruz
             boolean thereAnyProductForThisWarehouse = warehouseOperationService.isThereAnyProductForThisWarehouse(data.getId());
             if (thereAnyProductForThisWarehouse) {
-                return new WarehouseAPIResponseHolder<>(HttpStatus.NO_CONTENT, WarehouseAPIResponseError
+                return ResponseEntity.badRequest().body(new WarehouseAPIResponseHolder<>(HttpStatus.BAD_REQUEST, WarehouseAPIResponseError
                         .builder()
                         .code("WAREHOUSE_HAVE_PRODUCTS")
                         .message("Sorry, you can't delete this warehouse because it contains products. Please transfer the products first.")
-                        .build());
+                        .build()));
+
             }
         }
 
         // güncelleme yaparken depo codu değiştirilirse ve aynı kod ile kayıtlı başka bir depo varsa kaydı güncelleme
         boolean isExist = warehouseOperationService.hasExistSameCodeAndId(data.getId(), data.getCode());
         if (isExist) {
-            return new WarehouseAPIResponseHolder<>(HttpStatus.NO_CONTENT, WarehouseAPIResponseError
+            return ResponseEntity.badRequest().body(new WarehouseAPIResponseHolder<>(HttpStatus.BAD_REQUEST, WarehouseAPIResponseError
                     .builder()
                     .code("DUPLICATE_DATA")
                     .message("Sorry, you can't update this record. There is another record with this code.")
-                    .build());
+                    .build()));
         }
 
         WarehouseEntity updateEntity = warehouseDTOToWarehouseEntityConverter.convert(data);
         updateEntity.setUpdatedAt(new Date());
         WarehouseEntity updatedEntity = warehouseCRUDRepository.update(updateEntity);
-        return new WarehouseAPIResponseHolder<>(warehouseEntityToWarehouseDTOConverter.convert(updatedEntity),
-                HttpStatus.OK);
+
+
+        return ResponseEntity.ok().body(new WarehouseAPIResponseHolder<>(warehouseEntityToWarehouseDTOConverter.convert(updatedEntity),
+                HttpStatus.OK));
     }
 
     @Override
-    public WarehouseAPIResponseHolder<?> delete(Long id) {
+    public ResponseEntity<WarehouseAPIResponseHolder<?>> delete(Long id) {
         // ürün kontrolü yapıyoruz
 
         boolean thereAnyProductForThisWarehouse = warehouseOperationService.isThereAnyProductForThisWarehouse(id);
         if (thereAnyProductForThisWarehouse) {
-            return new WarehouseAPIResponseHolder<>(HttpStatus.NO_CONTENT, WarehouseAPIResponseError
+
+            return ResponseEntity.badRequest().body(new WarehouseAPIResponseHolder<>(HttpStatus.NO_CONTENT, WarehouseAPIResponseError
                     .builder()
                     .code("WAREHOUSE_HAVE_PRODUCTS")
                     .message("Sorry, you can't delete this warehouse because it contains products. Please transfer the products first.")
-                    .build());
+                    .build()));
         }
 
         warehouseCRUDRepository.delete(id);
-        return new WarehouseAPIResponseHolder<>(HttpStatus.OK);
+
+        return ResponseEntity.ok().body(new WarehouseAPIResponseHolder<>(HttpStatus.OK));
     }
 }

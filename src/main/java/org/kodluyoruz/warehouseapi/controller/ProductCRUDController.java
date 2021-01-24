@@ -25,16 +25,19 @@ public class ProductCRUDController {
 
     @PostMapping
     public WarehouseAPIResponseHolder<ProductDTO> create(@RequestBody ProductDTO productDTO) {
-        return productCRUDService.create(productDTO);
+        //return productCRUDService.create(productDTO);
+        return null;
     }
 
     @PutMapping("/{id}")
     public WarehouseAPIResponseHolder<ProductDTO> update(@PathVariable Long id, @RequestBody ProductDTO productDTO) {
-        return productCRUDService.update(id, productDTO);
+       // return productCRUDService.update(id, productDTO);
+        return null;
     }
 
     @DeleteMapping("/{id}")
     public WarehouseAPIResponseHolder<?> delete(@PathVariable Long id) {
-        return productCRUDService.delete(id);
+        //return productCRUDService.delete(id);
+        return null;
     }
 }

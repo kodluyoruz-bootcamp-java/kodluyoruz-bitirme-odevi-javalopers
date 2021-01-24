@@ -15,6 +15,7 @@ import org.kodluyoruz.warehouseapi.model.entites.WarehouseEntity;
 import org.kodluyoruz.warehouseapi.service.ProductCRUDService;
 import org.kodluyoruz.warehouseapi.service.ProductsOperationService;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -62,9 +63,9 @@ public class ProductCRUDServiceImpl implements ProductCRUDService {
     }
 
     @Override
-    public WarehouseAPIResponseHolder<ProductDTO> create(ProductDTO data) {
+    public ResponseEntity<WarehouseAPIResponseHolder<ProductDTO>> create(ProductDTO data) {
         if (Objects.isNull(data)) {
-            return new WarehouseAPIResponseHolder<>(HttpStatus.NO_CONTENT);
+            return ResponseEntity.badRequest().body(new WarehouseAPIResponseHolder<>(HttpStatus.NO_CONTENT));
         }
         String productName = data.getName();
         String productStatus = data.getStatus().toString();
@@ -77,52 +78,55 @@ public class ProductCRUDServiceImpl implements ProductCRUDService {
         // herhangi bir alan boş geçilmişse hata fırlatılmalı
         if (productName.isEmpty() || productStatus.isEmpty() || productCode.isEmpty() || productPrice.isEmpty() ||
                 productVatAmount.isEmpty() || productVatIncludedPrice.isEmpty() || productVatRate.isEmpty()) {
-            return new WarehouseAPIResponseHolder<>(HttpStatus.NO_CONTENT, WarehouseAPIResponseError
+            return ResponseEntity.badRequest().body(new WarehouseAPIResponseHolder<>(HttpStatus.BAD_REQUEST, WarehouseAPIResponseError
                     .builder()
                     .code("EMPTY_DATA")
                     .message("No field can be left empty. Please fill in all fields.")
-                    .build());
+                    .build()));
         }
 
         // Aynı ürün kodu ile birden fazla ürün olmamalı, girilen ürün kodu sistemde mevcutsa hata fırlatılmalı.
         boolean isExist = productsOperationService.hasExistSameCode(data.getCode());
         if (isExist) {
-            return new WarehouseAPIResponseHolder<>(HttpStatus.NO_CONTENT, WarehouseAPIResponseError
+
+            return ResponseEntity.badRequest().body(new WarehouseAPIResponseHolder<>(HttpStatus.NO_CONTENT, WarehouseAPIResponseError
                     .builder()
                     .code("DUPLICATE_DATA")
                     .message("You can not insert with same Product Code")
-                    .build());
+                    .build()));
         }
 
         // Ürün fiyatı, kdv oranı, kdv' si veya kdv' li ürün fiyatı negatif olamaz.
         if (Integer.parseInt(productPrice) < 0 || Integer.parseInt(productVatAmount) < 0 || Integer.parseInt(productVatIncludedPrice) < 0
                 || Integer.parseInt(productVatRate) < 0) {
-            return new WarehouseAPIResponseHolder<>(HttpStatus.NO_CONTENT, WarehouseAPIResponseError
+            return ResponseEntity.badRequest().body( new WarehouseAPIResponseHolder<>(HttpStatus.NO_CONTENT, WarehouseAPIResponseError
                     .builder()
                     .code("WRONG_DATA")
                     .message("Product price, VAT rate, VAT or product price with VAT cannot be negative.")
-                    .build());
+                    .build()));
         }
 
         ProductEntity productEntity = productDTOToProductEntityConverter.convert(data);
         productCRUDRepository.create(productEntity);
 
-        return new WarehouseAPIResponseHolder<>(productEntityToProductDTOConverter
-                .convert(productEntity), HttpStatus.OK);
+        return ResponseEntity.ok().body(new WarehouseAPIResponseHolder<>(productEntityToProductDTOConverter
+                .convert(productEntity), HttpStatus.OK));
     }
 
     @Override
-    public WarehouseAPIResponseHolder<ProductDTO> update(Long id, ProductDTO data) {
+    public ResponseEntity<WarehouseAPIResponseHolder<ProductDTO>> update(Long id, ProductDTO data) {
 
         data.setId(id);
         // DB'de kayıtlı bir ürün yok ise hata fırlatılmalı
         boolean isAnyProductsExists = productsOperationService.isThereAnyOfThis();
         if (!isAnyProductsExists) {
-            return new WarehouseAPIResponseHolder<>(HttpStatus.NO_CONTENT, WarehouseAPIResponseError
+
+            return ResponseEntity.badRequest().body(new WarehouseAPIResponseHolder<>(HttpStatus.NO_CONTENT, WarehouseAPIResponseError
                     .builder()
                     .code("NO_DATA")
                     .message("Sorry,There is no warehouse.")
-                    .build());
+                    .build()));
+
         }
 
         // Status deleted işaretlenmişse depoda ürün varsa deleted işaretleme yapılmamalı
@@ -130,46 +134,48 @@ public class ProductCRUDServiceImpl implements ProductCRUDService {
         if (warehouseStatus.equals("DELETED")) {
             boolean thereAnyProductForThisId = productsOperationService.isThereAnyProductForThisIdInStock(data.getId());
             if (thereAnyProductForThisId) {
-                return new WarehouseAPIResponseHolder<>(HttpStatus.NO_CONTENT, WarehouseAPIResponseError
+                return ResponseEntity.badRequest().body(new WarehouseAPIResponseHolder<>(HttpStatus.BAD_REQUEST, WarehouseAPIResponseError
                         .builder()
                         .code("THERE_IS_A_PRODUCT_HERE")
                         .message("Sorry, you cannot delete this item because this item is in stock.")
-                        .build());
+                        .build()));
             }
         }
 
         // güncelleme yaparken ürün codu değiştirilirse ve aynı kod ile kayıtlı başka bir ürün varsa kaydı güncelleme
         boolean isExist = productsOperationService.hasExistSameCodeAndId(data.getId(), data.getCode());
         if (isExist) {
-            return new WarehouseAPIResponseHolder<>(HttpStatus.NO_CONTENT, WarehouseAPIResponseError
+            return ResponseEntity.badRequest().body(new WarehouseAPIResponseHolder<>(HttpStatus.BAD_REQUEST, WarehouseAPIResponseError
                     .builder()
                     .code("DUPLICATE_DATA")
                     .message("Sorry, you can't update this record. There is another record with this code.")
-                    .build());
+                    .build()));
         }
 
         ProductEntity updateEntity = productDTOToProductEntityConverter.convert(data);
         updateEntity.setUpdatedAt(new Date());
         ProductEntity updatedEntity = productCRUDRepository.update(updateEntity);
-        return new WarehouseAPIResponseHolder<>(productEntityToProductDTOConverter.convert(updatedEntity),
-                HttpStatus.OK);
+
+
+        return ResponseEntity.ok().body(new WarehouseAPIResponseHolder<>(productEntityToProductDTOConverter.convert(updatedEntity),
+                HttpStatus.OK));
     }
 
     @Override
-    public WarehouseAPIResponseHolder<?> delete(Long id) {
+    public ResponseEntity<WarehouseAPIResponseHolder<?>> delete(Long id) {
         // Ürün silinmeden önce mutlaka stok bilgisine bakılmalı.
         // Depolar içerisinde ilgili ürüne ait stoğu 0'dan büyük bir kayıt var ise ürün silinmemeli ve hata fırlatılmalı
 
         boolean thereAnyProductForThisId = productsOperationService.isThereAnyProductForThisIdInStock(id);
         if (thereAnyProductForThisId) {
-            return new WarehouseAPIResponseHolder<>(HttpStatus.NO_CONTENT, WarehouseAPIResponseError
+            return ResponseEntity.badRequest().body(new WarehouseAPIResponseHolder<>(HttpStatus.BAD_REQUEST, WarehouseAPIResponseError
                     .builder()
                     .code("CANNOT_DELETE")
                     .message("Sorry you can't delete this item because this product is in stock.")
-                    .build());
+                    .build()));
         }
 
         productCRUDRepository.delete(id);
-        return new WarehouseAPIResponseHolder<>(HttpStatus.OK);
+        return ResponseEntity.ok().body(new WarehouseAPIResponseHolder<>(HttpStatus.OK));
     }
 }
