@@ -8,6 +8,7 @@ import lombok.Setter;
 import org.kodluyoruz.warehouseapi.model.enums.StatusEnum;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Set;
@@ -23,9 +24,11 @@ public class ProductEntity extends BaseEntity {
     Set<ProductWarehouseEntity> productWarehouseEntitySet;
 
     @Column(name = "CODE", unique = true, length = 50, nullable = false)
+    @NotNull(message = "{@NotNull.code})")
     private String code;
 
     @Column(name = "NAME", length = 100, nullable = false)
+    @NotNull(message = "{@NotNull.name})")
     private String name;
 
     @Column(name = "VAT_RATE", precision = 3, scale = 2, nullable = false)

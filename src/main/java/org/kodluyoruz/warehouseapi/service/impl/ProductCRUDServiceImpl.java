@@ -67,6 +67,7 @@ public class ProductCRUDServiceImpl implements ProductCRUDService {
         if (Objects.isNull(data)) {
             return ResponseEntity.badRequest().body(new WarehouseAPIResponseHolder<>(HttpStatus.NO_CONTENT));
         }
+
         String productName = data.getName();
         String productStatus = data.getStatus().toString();
         String productCode = data.getCode();

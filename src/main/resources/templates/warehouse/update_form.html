@@ -1,10 +1,10 @@
 <div class="modal-header" xmlns:th="http://www.thymeleaf.org">
-    <h5 class="modal-title" id="exampleModalLabel">Edit Warehouse</h5>
+    <h5 class="modal-title" id="exampleModalLabel">Edit Product</h5>
     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
         <span aria-hidden="true">&times;</span>
     </button>
 </div>
-<form th:object="${warehouse}" th:action="@{'/warehouses/' + *{id}}" method="post" id="update-warehouse">
+<form th:object="${warehouse}" th:action="@{'/warehouses/' + *{id}}" method="post" id="update-form">
 <div class="modal-body">
 
         <div class="form-group">
