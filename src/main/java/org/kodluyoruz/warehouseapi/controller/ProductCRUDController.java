@@ -7,6 +7,7 @@ import org.kodluyoruz.warehouseapi.config.SwaggerClient;
 import org.kodluyoruz.warehouseapi.model.dto.ProductDTO;
 import org.kodluyoruz.warehouseapi.model.enums.StatusEnum;
 import org.kodluyoruz.warehouseapi.service.ProductCRUDService;
+import org.kodluyoruz.warehouseapi.service.ProductsOperationService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,6 +22,7 @@ import java.util.Collection;
 public class ProductCRUDController {
 
     private final ProductCRUDService productCRUDService;
+    private final ProductsOperationService productsOperationService;
 
     @GetMapping
     public String getAllProducts(Model model) {
@@ -55,5 +57,11 @@ public class ProductCRUDController {
     @DeleteMapping("/{id}")
     public ResponseEntity<WarehouseAPIResponseHolder<?>> delete(@PathVariable Long id) {
         return productCRUDService.delete(id);
+    }
+
+    @GetMapping("/warehouses/{id}")
+    public String getAllProductsByProductsId(@PathVariable Long id, Model model) {
+        model.addAttribute("listOfProductWarehouses", productsOperationService.getProductsAndWarehousesByProductId(id).getResponseData());
+        return "product/product_warehouses";
     }
 }

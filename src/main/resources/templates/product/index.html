@@ -54,6 +54,13 @@
                                class="btn btn-sm btn-danger del">
                                 <i class="fa fa-trash"></i>
                             </a>
+                            <a href="javascript:void(0);"
+                               id="get-products"
+                               data-placement="top" title="Products" data-toggle="tooltip"
+                               th:attr="data-remote=@{/products/warehouses/{id}(id=${product.id})}"
+                               class="btn btn-sm btn-secondary open-modal">
+                                <i class="fa fa-product-hunt"></i>
+                            </a>
                         </td>
                     </tr>
 

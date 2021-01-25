@@ -3,6 +3,7 @@ package org.kodluyoruz.warehouseapi.dao.impl;
 import org.kodluyoruz.warehouseapi.base.AbstractOperationBaseOperationRepository;
 import org.kodluyoruz.warehouseapi.dao.WarehouseOperationRepository;
 import org.kodluyoruz.warehouseapi.model.entites.ProductWarehouseEntity;
+import org.kodluyoruz.warehouseapi.model.entites.Summary;
 import org.kodluyoruz.warehouseapi.model.entites.WarehouseEntity;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,6 +31,20 @@ public class WarehouseOperationRepositoryImpl extends AbstractOperationBaseOpera
         return getSession()
                 .createQuery("from " + ProductWarehouseEntity.class.getName() + "  where warehouse_id=:warehouseId", ProductWarehouseEntity.class)
                 .setParameter("warehouseId", warehouseId)
+                .getResultList();
+    }
+
+    @Override
+    public Collection<Summary> getProductsByWarehouseId(Long warehouseId) {
+        return getSession()
+                .createQuery("select new org.kodluyoruz.warehouseapi.model.entites.Summary(w.id as WarehouseID, w.code as WarehouseCode, w.name as WarehouseName, " +
+                        "p.id as ProductID, p.code as ProductCode, p.name as ProductName, p.vatRate as VatRate, p.vatAmount as VatAmount, p.price as Price, p.vatIncludedPrice as VatIncludedPrice, p.status as ProductStatus, " +
+                        "pw.stockAmount as StockAmount) " +
+                        "from warehouse w inner join product_warehouse pw on w.id=pw.productWarehouseId.warehouseId " +
+                        "inner join product p on p.id=pw.productWarehouseId.productId " +
+                        "where w.id=:warehouseId " +
+                        "ORDER BY w.id asc ", Summary.class)
+                .setParameter("warehouseId",warehouseId)
                 .getResultList();
     }
 

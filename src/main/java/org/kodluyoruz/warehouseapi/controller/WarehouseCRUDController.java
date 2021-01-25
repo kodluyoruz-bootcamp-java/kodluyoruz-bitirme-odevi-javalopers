@@ -62,14 +62,20 @@ public class WarehouseCRUDController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?>  delete(@PathVariable Long id) {
-        return  warehouseCRUDService.delete(id);
+    public ResponseEntity<?> delete(@PathVariable Long id) {
+        return warehouseCRUDService.delete(id);
     }
 
     @PutMapping(path = "/transfer/{fromWarehouseId}/{toWarehouseId}")
     public WarehouseAPIResponseHolder<?> transferAllProducts
             (@PathVariable("fromWarehouseId") Long fromWarehouseId, @PathVariable("toWarehouseId") Long toWarehouseId) {
         return warehouseOperationService.transferAllProducts(fromWarehouseId, toWarehouseId);
+    }
+
+    @GetMapping("/products/{id}")
+    public String getAllProductsByProductsId(@PathVariable Long id, Model model) {
+        model.addAttribute("listOfWarehouseProducts", warehouseOperationService.getProductsByWarehouseId(id).getResponseData());
+        return "warehouse/warehouse_products";
     }
 
 /*
