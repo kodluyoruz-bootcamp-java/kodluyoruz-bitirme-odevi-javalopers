@@ -23,7 +23,7 @@
                         <th style="width: 100px;">Code</th>
                         <th style="width: 200px;">Name</th>
                         <th style="width: 50px;">Status</th>
-                        <th style="width: 25px;">Actions</th>
+                        <th style="width: 50px;">Actions</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -33,6 +33,12 @@
                         <td th:text="${warehouse.name}"></td>
                         <td th:text="${warehouse.status}"></td>
                         <td>
+                            <a href="javascript:void(0);"
+                               data-placement="top" title="Summaries" data-toggle="tooltip"
+                               th:attr="data-remote=@{'/warehouses/'+ ${warehouse.id} + '/summaries'}"
+                               class="btn btn-sm btn-info open-modal">
+                                <i class="fa fa-eye"></i>
+                            </a>
                             <a href="javascript:void(0);"
                                data-placement="top" title="Update" data-toggle="tooltip"
                                th:attr="data-remote=@{/warehouses/update/{id}(id=${warehouse.id})}"
@@ -46,10 +52,10 @@
                                class="btn btn-sm btn-danger del">
                                 <i class="fa fa-trash"></i>
                             </a>
-                            <a href="javascript:void(0);"
+                            <a th:href="@{'/warehouses/' + ${warehouse.id} + '/products'}"
                                id="get-products"
                                data-placement="top" title="Products" data-toggle="tooltip"
-                               th:attr="data-remote=@{/warehouses/products/{id}(id=${warehouse.id})}"
+
                                class="btn btn-sm btn-secondary open-modal">
                                 <i class="fab fa-product-hunt"></i>
                             </a>

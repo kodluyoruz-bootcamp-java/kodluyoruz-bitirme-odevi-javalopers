@@ -20,14 +20,14 @@
                     <thead class="thead-dark">
                     <tr>
                         <th style="width: 25px;">ID</th>
-                        <th style="width: 100px;">Code</th>
-                        <th style="width: 200px;">Name</th>
+                        <th style="width: 50px;">Code</th>
+                        <th style="width: 150px;">Name</th>
                         <th style="width: 25px;">Rate</th>
                         <th style="width: 25px;">Amount</th>
                         <th style="width: 25px;">Price</th>
                         <th style="width: 25px;">VatPrice</th>
                         <th style="width: 50px;">Status</th>
-                        <th style="width: 25px;">Actions</th>
+                        <th style="width: 50px;">Actions</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -42,6 +42,12 @@
                         <td th:text="${product.status}"></td>
                         <td>
                             <a href="javascript:void(0);"
+                               data-placement="top" title="Summaries" data-toggle="tooltip"
+                               th:attr="data-remote=@{'/products/'+ ${product.id} + '/summaries'}"
+                               class="btn btn-sm btn-info open-modal">
+                                <i class="fa fa-eye"></i>
+                            </a>
+                            <a href="javascript:void(0);"
                                data-placement="top" title="Update" data-toggle="tooltip"
                                th:attr="data-remote=@{/products/update/{id}(id=${product.id})}"
                                class="btn btn-sm btn-primary open-modal">
@@ -55,12 +61,13 @@
                                 <i class="fa fa-trash"></i>
                             </a>
                             <a href="javascript:void(0);"
-                               id="get-products"
-                               data-placement="top" title="Products" data-toggle="tooltip"
-                               th:attr="data-remote=@{/products/warehouses/{id}(id=${product.id})}"
-                               class="btn btn-sm btn-secondary open-modal">
-                                <i class="fab fa-product-hunt"></i>
+                               id="add-to-warehouse"
+                               data-placement="top" title="Add To Warehouse" data-toggle="tooltip"
+                               th:attr="data-remote=@{'/products/'+ ${product.id} + '/add-to-warehouse'}"
+                               class="btn btn-sm btn-success open-modal">
+                                <i class="fa fa-plus"></i>
                             </a>
+
                         </td>
                     </tr>
 

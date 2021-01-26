@@ -72,17 +72,16 @@ public class WarehouseCRUDController {
         return warehouseOperationService.transferAllProducts(fromWarehouseId, toWarehouseId);
     }
 
-    @GetMapping("/products/{id}")
-    public String getAllProductsByProductsId(@PathVariable Long id, Model model) {
+    @GetMapping("/{id}/products")
+    public String getAllProductsByWarehouseId(@PathVariable Long id, Model model) {
+        model.addAttribute("warehouse", warehouseCRUDService.getById(id).getResponseData());
         model.addAttribute("listOfWarehouseProducts", warehouseOperationService.getProductsByWarehouseId(id).getResponseData());
         return "warehouse/warehouse_products";
     }
 
-/*
+    @GetMapping("/{id}/summaries")
+    public String getSummariesByWarehouseId(@PathVariable Long id, Model model) {
+        return "warehouse/summaries";
+    }
 
-    @GetMapping("/edit/{id}")
-    public String showFormForUpdate(@PathVariable Long id, Model model){
-        model.addAttribute("warehouse", warehouseCRUDService.getById(id).getResponseData());
-        return "update_warehouse";
-    }*/
 }

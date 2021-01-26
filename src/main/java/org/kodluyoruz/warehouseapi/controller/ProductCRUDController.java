@@ -8,6 +8,7 @@ import org.kodluyoruz.warehouseapi.model.dto.ProductDTO;
 import org.kodluyoruz.warehouseapi.model.enums.StatusEnum;
 import org.kodluyoruz.warehouseapi.service.ProductCRUDService;
 import org.kodluyoruz.warehouseapi.service.ProductsOperationService;
+import org.kodluyoruz.warehouseapi.service.WarehouseCRUDService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -23,6 +24,7 @@ public class ProductCRUDController {
 
     private final ProductCRUDService productCRUDService;
     private final ProductsOperationService productsOperationService;
+    private final WarehouseCRUDService warehouseCRUDService;
 
     @GetMapping
     public String getAllProducts(Model model) {
@@ -59,9 +61,17 @@ public class ProductCRUDController {
         return productCRUDService.delete(id);
     }
 
-    @GetMapping("/warehouses/{id}")
-    public String getProductsAndWarehousesByProductId(@PathVariable Long id, Model model) {
-        model.addAttribute("listOfProductWarehouses", productsOperationService.getProductsAndWarehousesByProductId(id).getResponseData());
-        return "product/product_warehouses";
+
+    @GetMapping("/{id}/summaries")
+    public String getSummariesByProductId(@PathVariable Long id, Model model) {
+        model.addAttribute("product", productCRUDService.getById(id).getResponseData());
+        return "product/summaries";
+    }
+
+    @GetMapping("/{id}/add-to-warehouse")
+    public String addToWarehouse(@PathVariable Long id, Model model) {
+        model.addAttribute("product", productCRUDService.getById(id).getResponseData());
+        model.addAttribute("warehouses", warehouseCRUDService.list().getResponseData());
+        return "product/add_to_warehouse_form";
     }
 }
