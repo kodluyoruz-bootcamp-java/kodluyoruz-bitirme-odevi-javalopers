@@ -84,7 +84,7 @@
                 })
             });
 
-            $(document).on('submit', '#create-warehouse', function (e) {
+            $(document).on('submit', '#create-form', function (e) {
                 e.preventDefault();
 
                 submitForm($(this), 'POST');
@@ -92,7 +92,7 @@
                 return false;
             });
 
-            $(document).on('submit', '#update-warehouse', function (e) {
+            $(document).on('submit', '#update-form', function (e) {
                 e.preventDefault();
                 submitForm($(this), 'PUT');
                 return false;

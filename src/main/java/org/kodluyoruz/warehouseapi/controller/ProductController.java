@@ -20,7 +20,7 @@ import java.util.Collection;
 @RequiredArgsConstructor
 @SwaggerClient
 @RequestMapping("/products")
-public class ProductCRUDController {
+public class ProductController {
 
     private final ProductCRUDService productCRUDService;
     private final ProductsOperationService productsOperationService;

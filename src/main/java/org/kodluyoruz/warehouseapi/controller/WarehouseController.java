@@ -26,7 +26,7 @@ import javax.validation.Valid;
 @SwaggerClient
 @RequestMapping("/warehouses")
 @Controller
-public class WarehouseCRUDController {
+public class WarehouseController {
 
     private final WarehouseCRUDService warehouseCRUDService;
     private final WarehouseOperationService warehouseOperationService;
