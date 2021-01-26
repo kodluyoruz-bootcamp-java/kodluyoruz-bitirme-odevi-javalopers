@@ -28,7 +28,7 @@
                     </thead>
                     <tbody>
                     <tr th:each="productWarehouse : ${listOfProductWarehouses}"
-                        th:attr="url=@{/warehouses/products/{id}(id=${productWarehouse.productId})}">
+                        th:attr="url=@{/products/warehouses/{id}(id=${productWarehouse.productId})}">
                         <td th:text="${productWarehouse.productId}"></td>
                         <td th:text="${productWarehouse.productCode}"></td>
                         <td th:text="${productWarehouse.productName}"></td>

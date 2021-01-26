@@ -60,7 +60,7 @@ public class ProductCRUDController {
     }
 
     @GetMapping("/warehouses/{id}")
-    public String getAllProductsByProductsId(@PathVariable Long id, Model model) {
+    public String getProductsAndWarehousesByProductId(@PathVariable Long id, Model model) {
         model.addAttribute("listOfProductWarehouses", productsOperationService.getProductsAndWarehousesByProductId(id).getResponseData());
         return "product/product_warehouses";
     }
