@@ -7,6 +7,7 @@ import org.kodluyoruz.warehouseapi.base.WarehouseAPIResponseHolder;
 import org.kodluyoruz.warehouseapi.dao.WarehouseOperationRepository;
 import org.kodluyoruz.warehouseapi.model.entites.ProductWarehouseEntity;
 import org.kodluyoruz.warehouseapi.model.entites.Summary;
+import org.kodluyoruz.warehouseapi.model.entites.WarehouseSummary;
 import org.kodluyoruz.warehouseapi.service.WarehouseOperationService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -128,6 +129,17 @@ public class WarehouseOperationServiceImpl implements WarehouseOperationService 
         }
 
         return new WarehouseAPIResponseHolder<>(warehouseProducts,HttpStatus.OK);
+    }
+
+    @Override
+    public WarehouseAPIResponseHolder<WarehouseSummary> getSummaryOfThisWarehouse(Long warehouseId) {
+
+
+
+        WarehouseSummary summaryOfThisWarehouse = warehouseOperationRepository.getSummaryOfThisWarehouse(warehouseId);
+
+
+        return new WarehouseAPIResponseHolder<>(summaryOfThisWarehouse,HttpStatus.OK);
     }
 
     @Override

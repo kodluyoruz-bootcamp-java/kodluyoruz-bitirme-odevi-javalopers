@@ -5,6 +5,7 @@ import org.kodluyoruz.warehouseapi.dao.WarehouseOperationRepository;
 import org.kodluyoruz.warehouseapi.model.entites.ProductWarehouseEntity;
 import org.kodluyoruz.warehouseapi.model.entites.Summary;
 import org.kodluyoruz.warehouseapi.model.entites.WarehouseEntity;
+import org.kodluyoruz.warehouseapi.model.entites.WarehouseSummary;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,12 +41,26 @@ public class WarehouseOperationRepositoryImpl extends AbstractOperationBaseOpera
                 .createQuery("select new org.kodluyoruz.warehouseapi.model.entites.Summary(w.id as WarehouseID, w.code as WarehouseCode, w.name as WarehouseName, " +
                         "p.id as ProductID, p.code as ProductCode, p.name as ProductName, p.vatRate as VatRate, p.vatAmount as VatAmount, p.price as Price, p.vatIncludedPrice as VatIncludedPrice, p.status as ProductStatus, " +
                         "pw.stockAmount as StockAmount) " +
-                        "from warehouse w inner join product_warehouse pw on w.id=pw.productWarehouseId.warehouseId " +
+                        "from warehouse w " +
+                        "inner join product_warehouse pw on w.id=pw.productWarehouseId.warehouseId " +
                         "inner join product p on p.id=pw.productWarehouseId.productId " +
                         "where w.id=:warehouseId " +
                         "ORDER BY w.id asc ", Summary.class)
                 .setParameter("warehouseId",warehouseId)
                 .getResultList();
+    }
+
+    @Override
+    public WarehouseSummary getSummaryOfThisWarehouse(Long warehouseId) {
+        return getSession()
+                .createQuery("select new org.kodluyoruz.warehouseapi.model.entites.WarehouseSummary(count(p.id) as NumberOfProductTypes, sum(pw.stockAmount) as TotalStockQuantityOfAllProducts, max(p.vatIncludedPrice) as MostExpensiveProductPrice, " +
+                        "min(p.vatIncludedPrice) as CheapestProductPrice, format(sum(pw.stockAmount * p.vatIncludedPrice),'N2') as TotalValueOfAllProducts) " +
+                        "from product_warehouse pw " +
+                        "inner join product p on p.id = pw.productWarehouseId.productId " +
+                        "inner join warehouse w on w.id = pw.productWarehouseId.warehouseId " +
+                        "where w.id=:warehouseId ", WarehouseSummary.class)
+                .setParameter("warehouseId",warehouseId)
+                .getSingleResult();
     }
 
     // yeni bir kayıt olarak ProductWarehouse tablosune veri ekleme

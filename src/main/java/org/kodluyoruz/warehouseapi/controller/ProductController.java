@@ -61,6 +61,11 @@ public class ProductController {
         return productCRUDService.delete(id);
     }
 
+    @GetMapping("/{id}/information")
+    public String getInformationByProductId(@PathVariable Long id, Model model) {
+        model.addAttribute("product", productCRUDService.getById(id).getResponseData());
+        return "product/information";
+    }
 
     @GetMapping("/{id}/summaries")
     public String getSummariesByProductId(@PathVariable Long id, Model model) {

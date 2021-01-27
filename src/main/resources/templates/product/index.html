@@ -41,6 +41,14 @@
                         <td th:text="${product.vatIncludedPrice}"></td>
                         <td th:text="${product.status}"></td>
                         <td>
+
+                            <a href="javascript:void(0);"
+                               data-placement="top" title="Information" data-toggle="tooltip"
+                               th:attr="data-remote=@{'/products/'+ ${product.id} + '/information'}"
+                               class="btn btn-sm btn-dark open-modal">
+                                <i class="fa fa-info-circle"></i>
+                            </a>
+
                             <a href="javascript:void(0);"
                                data-placement="top" title="Summaries" data-toggle="tooltip"
                                th:attr="data-remote=@{'/products/'+ ${product.id} + '/summaries'}"

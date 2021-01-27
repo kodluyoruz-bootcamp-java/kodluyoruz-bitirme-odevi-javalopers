@@ -79,8 +79,15 @@ public class WarehouseController {
         return "warehouse/warehouse_products";
     }
 
+    @GetMapping("/{id}/information")
+    public String getInformationByProductId(@PathVariable Long id, Model model) {
+        model.addAttribute("warehouse", warehouseCRUDService.getById(id).getResponseData());
+        return "warehouse/information";
+    }
+
     @GetMapping("/{id}/summaries")
     public String getSummariesByWarehouseId(@PathVariable Long id, Model model) {
+        model.addAttribute("warehouseSummary", warehouseOperationService.getSummaryOfThisWarehouse(id).getResponseData());
         return "warehouse/summaries";
     }
 
