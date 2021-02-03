@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 package org.kodluyoruz.warehouseapi.converter;
 import java.util.Date;
 
@@ -20,26 +19,3 @@ public class ProductWarehouseEntityToProductWarehouseDTOConverter implements War
         return productWarehouseDTO;
     }
 }
-=======
-package org.kodluyoruz.warehouseapi.converter;
-import java.util.Date;
-
-import org.kodluyoruz.warehouseapi.base.WarehouseAPIConverter;
-import org.kodluyoruz.warehouseapi.model.dto.ProductWarehouseDTO;
-import org.kodluyoruz.warehouseapi.model.entites.ProductWarehouseEntity;
-import org.springframework.stereotype.Component;
-
-@Component
-public class ProductWarehouseEntityToProductWarehouseDTOConverter implements WarehouseAPIConverter<ProductWarehouseEntity, ProductWarehouseDTO> {
-    @Override
-    public ProductWarehouseDTO convert(ProductWarehouseEntity input) {
-        ProductWarehouseDTO productWarehouseDTO = new ProductWarehouseDTO();
-        productWarehouseDTO.setProductWarehouseId(input.getProductWarehouseId());
-        productWarehouseDTO.setStockAmount(input.getStockAmount());
-        productWarehouseDTO.setCreatedAt(new Date());
-        productWarehouseDTO.setCreatedBy(input.getCreatedBy());
-
-        return productWarehouseDTO;
-    }
-}
->>>>>>> 5893d28733a254c8c0b7a4540aaa7efad79499b2
