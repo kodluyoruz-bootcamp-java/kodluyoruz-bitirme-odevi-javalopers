@@ -1,20 +1,33 @@
-[![Work in Repl.it](https://classroom.github.com/assets/work-in-replit-14baed9a392b3a25080506f3b7b6d57f295ec2978f6f33ec97e36a161684cbe9.svg)](https://classroom.github.com/online_ide?assignment_repo_id=3838714&assignment_repo_type=AssignmentRepo)
+# Warehouse Management System
 
-# Warehouse Restful Api
-
-Merhaba arkadaşlar, bu hafta Warehouse Restful API'sı oluşturacağız. Uygulamamızı **Spring Boot** kullanarak yazacağız.
+Merhaba arkadaşlar, bitirme ödevi olarak **Depo Yönetim Sistemi** yapacağız.
 
 # Gereksinimler
 
 * Spring Boot 
 * Spring Web
 * Jpa
-* H2 Database
+* Postgres/H2/MSSQL/MySql
 * Lombok
-
+* Ön yüz olarak **React, Angular, Vue.Js, JSF, JSP veya farklı** ön yüz teknolojisi kullanabilirsiniz.
 
 
 # Uygulama Özellikleri
+
+Depo yönetim sistemi ile, bir şirketin ürünlerini sakladığı, listelediği, depolar arasında transfer yapabildiği, depolar ve ürünler üzerinde CRUD işlemlerini yapabildiği bir sistem yazıyor olacağız. 
+
+# Fonksiyonlar
+
+- Kullanıcı sisteme email-şifre kombinasyonu ile girmeli.
+- Sisteme girildikten sonra kayıtlı tüm depoların listelenmesi gerekmektedir. ( DELETED statüsündeki depolar listelenmeyecek )
+- Listelenen Depo tıklanıldığında, depo içerisindeki (DELETED statüsünde olmayan ) ürünler listelenecektir. 
+- Listelenen Depo ekranında depolar üzerinde işlemler yapılmalıdır. 
+- Listelenen ürüne tıklanıldığında açılacak bir pencerede ürüne ait bilgiler gösterilecektir. 
+- Ürün listeleme ekranında ürünün depodaki miktarı değiştirilebilecektir. 
+- Ürün listeleme ekranında o ürün başka bir depoya transfer edilebilecektir. 
+- Bir ürüne tıklanıldığında o ürünün hangi depolarda bulunduğunu, toplam adet sayısı gibi özet bilgileri gösterilecektir. 
+- Bir deponun özet bilgisi görülebilecektir. Özet bilgi içerisinde toplam ürün sayısı, toplam ürün fiyatı gibi bilgiler. 
+- Bunun dışında eklemek istediğiniz özellikler varsa ekleyebilirsiniz.
 
 Bu API ile sistemde kayıtlı Depo'lara yine sistemde kayıtlı bulunan ürünlerin stok miktarlarını tutacağız. Bir ürün aratıldığında o ürünün hangi depoda kaç adet ürün olduğunu görebildiğimiz gibi dilediğimizde ürün çıkartma / ekleme ve ürün stoğunu güncelleme gibi işlemleri yapacağız.
 
@@ -23,6 +36,7 @@ Bu API ile sistemde kayıtlı Depo'lara yine sistemde kayıtlı bulunan ürünle
 1. Warehouse
 2. Product
 3. ProductWarehouse
+4. User
 
 **Warehouse**
 
@@ -48,6 +62,19 @@ Depomuzun özellikleri aşağıdaki gibidir.
   * Kayıt Tarihi (CreateDate)
   * Güncelleme Tarihi (UpdateDate)
   
+**User**
+Kullanıcıya ait özellikler aşağıdaki gibidir.
+
+  * ID ( Primary Key )
+  * User Code (Code)
+  * User Name (Name)
+  * Email (Email)
+  * Password (Password) **hashli tutulmalı**
+  * Kullanıcının statüsü ( UserStatus {ACTIVE, PASSIVE, DELETED} )
+  * Kayıt Tarihi (CreateDate)
+  * Güncelleme Tarihi (UpdateDate)
+  
+  
 **ProductWarehouse**
 Bu model İlişkisel olarak depo - ürün bilgisini tutacaktır. Özellikleri aşağıdaki gibidir.
 
@@ -55,6 +82,7 @@ Bu model İlişkisel olarak depo - ürün bilgisini tutacaktır. Özellikleri a�
   * Depo ID'si (WarehouseId)
   * Stok Miktarı (StockAmount)
   * İşlem zamanı (TransactionDate)
+  * İşlemi yapan kullanıcı ID'si (CreatedBy)
   
 
 # Fonksiyonlar
@@ -120,7 +148,7 @@ Kullanıcı N adet depo oluşturabilir ve oluşturduğu bu depoların tamamını
     * **Method Name** = delete
     * **HTTP Request Type** = DELETE
     * **End Point** = /warehouseapi/products/{productId}
-     * **Kondisyon** = Ürün silinmeden önce mutlaka stok bilgisine bakılmalı. Depolar içerisinde ilgili ürüne ait stoğu 0'dan büyük bir kayıt var ise ürün silinmemeli ve hata fırlatılmalı..
+    * **Kondisyon** = Ürün silinmeden önce mutlaka stok bilgisine bakılmalı. Depolar içerisinde ilgili ürüne ait stoğu 0'dan büyük bir kayıt var ise ürün silinmemeli ve hata fırlatılmalı..
      
 
 **StockController**
@@ -143,10 +171,20 @@ Kullanıcı N adet depo oluşturabilir ve oluşturduğu bu depoların tamamını
     * **End Point** = /warehouseapi/stocks
     * **Kondisyon** = Bu method ile hangi depoda hangi üründen kaç adet var, bu ürünlerin KDV'li, KDV'siz toplam fiyatları ile toplam KDV bilgilerini de gönderiyor olacağız. 
     
+**UserController**
+
+1. Login
+
+    * **Method Name** = login
+    * **HTTP Request Type** = POST
+    * **EndPoint** = /warehouseapi/user/login
+    * **Kondisyon** = Kullanıcının email ve şifresinin kontrolü yapılmalı. Email için validasyon uygulanmalı. Email veya şifre uyumlu değilse kullanıcıya bilgi verilmeli.  
+
+    
     
 # Dikkat edilmesi gereken hususlar #
 
-Kullanacağımız veri tabanı H2 olacaktır.  H2'nun memory özelliği olduğundan uygulamamızı kapatıp açsakta bu bilgilerin local file'de kalmasını sağlayalım. ( Bunun için biraz araştırma yapmanız gerekecek ) 
+Kullanacağımız veri tabanı dilediğiniz bir veritabanı olabilir. 
 
 Kodlarımızı yazarken MVC ( Model / View / Controller ) yapısına dikkat edelim. Data Layer'da sadece Database işlemleri yaparken Business Layer'da gerekiyorsa validasyonlarımızı ve hesaplamalarımızı yapacağız. Servis katmanı asla data katmanındaki objeyi bilmeyecektir. Aynı anda data katmanı da servis katmanındaki objeyi bilmeyerek loose coupling'i gerçekleştireceğiz. Controller katmanında herhangi bir business olmamalı.
 
