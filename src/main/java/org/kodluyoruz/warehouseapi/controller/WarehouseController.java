@@ -1,6 +1,7 @@
 package org.kodluyoruz.warehouseapi.controller;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.kodluyoruz.warehouseapi.base.WarehouseAPIResponseHolder;
 import org.kodluyoruz.warehouseapi.config.SwaggerClient;
 import org.kodluyoruz.warehouseapi.exceptions.CustomGlobalExceptionHandler;
@@ -26,6 +27,7 @@ import javax.validation.Valid;
 @SwaggerClient
 @RequestMapping("/warehouses")
 @Controller
+@Slf4j
 public class WarehouseController {
 
     private final WarehouseCRUDService warehouseCRUDService;
@@ -87,7 +89,7 @@ public class WarehouseController {
 
     @GetMapping("/{id}/summaries")
     public String getSummariesByWarehouseId(@PathVariable Long id, Model model) {
-        model.addAttribute("warehouseSummary", warehouseOperationService.getSummaryOfThisWarehouse(id).getResponseData());
+        model.addAttribute("warehouse", warehouseCRUDService.getById(id).getResponseData());
         return "warehouse/summaries";
     }
 

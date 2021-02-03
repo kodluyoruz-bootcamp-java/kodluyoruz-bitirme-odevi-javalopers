@@ -53,9 +53,8 @@ public class WarehouseOperationRepositoryImpl extends AbstractOperationBaseOpera
     @Override
     public WarehouseSummary getSummaryOfThisWarehouse(Long warehouseId) {
         return getSession()
-                .createQuery("select new org.kodluyoruz.warehouseapi.model.entites.WarehouseSummary(count(p.id) as NumberOfProductTypes, sum(pw.stockAmount) as TotalStockQuantityOfAllProducts, max(p.vatIncludedPrice) as MostExpensiveProductPrice, " +
-                        "min(p.vatIncludedPrice) as CheapestProductPrice, format(sum(pw.stockAmount * p.vatIncludedPrice),'N2') as TotalValueOfAllProducts) " +
-                        "from product_warehouse pw " +
+                .createQuery("select count(p.id) as NumberOfProductTypes, sum(pw.stockAmount) as TotalStockQuantityOfAllProducts " +
+                        "FROM PRODUCT_WAREHOUSE pw " +
                         "inner join product p on p.id = pw.productWarehouseId.productId " +
                         "inner join warehouse w on w.id = pw.productWarehouseId.warehouseId " +
                         "where w.id=:warehouseId ", WarehouseSummary.class)

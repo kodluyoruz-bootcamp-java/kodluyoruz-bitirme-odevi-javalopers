@@ -115,6 +115,12 @@
                 return false;
             });
 
+            $(document).on('submit', '#add-to-warehouse-form', function (e) {
+                e.preventDefault();
+                submitForm($(this), 'PUT');
+                return false;
+            });
+
             $(document).on('click', '.del', function (e) {
                 var element = $(this);
 

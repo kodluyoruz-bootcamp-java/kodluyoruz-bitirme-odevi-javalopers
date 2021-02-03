@@ -8,7 +8,9 @@ import org.kodluyoruz.warehouseapi.model.dto.ProductDTO;
 import org.kodluyoruz.warehouseapi.model.enums.StatusEnum;
 import org.kodluyoruz.warehouseapi.service.ProductCRUDService;
 import org.kodluyoruz.warehouseapi.service.ProductsOperationService;
+import org.kodluyoruz.warehouseapi.service.StockOperationService;
 import org.kodluyoruz.warehouseapi.service.WarehouseCRUDService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -24,6 +26,7 @@ public class ProductController {
 
     private final ProductCRUDService productCRUDService;
     private final ProductsOperationService productsOperationService;
+    private final StockOperationService stockOperationService;
     private final WarehouseCRUDService warehouseCRUDService;
 
     @GetMapping
@@ -78,5 +81,13 @@ public class ProductController {
         model.addAttribute("product", productCRUDService.getById(id).getResponseData());
         model.addAttribute("warehouses", warehouseCRUDService.list().getResponseData());
         return "product/add_to_warehouse_form";
+    }
+
+    //TODO servise bağlanacak.
+    //Endpointleri yazıldı.
+    @PutMapping("/{id}/add-to-warehouse")
+    public ResponseEntity<WarehouseAPIResponseHolder<ProductDTO>> addToWarehouse(@PathVariable Long id, @RequestBody ProductDTO productDTO) {
+        return ResponseEntity.ok().body(new WarehouseAPIResponseHolder<>(productDTO, HttpStatus.OK));
+
     }
 }

@@ -14,7 +14,7 @@ import java.math.BigDecimal;
 public class WarehouseSummary {
     private Long numberOfProductTypes;
     private Long totalStockQuantityOfAllProducts;
-    private BigDecimal mostExpensiveProductPrice;
+   /* private BigDecimal mostExpensiveProductPrice;
     private BigDecimal cheapestProductPrice;
-    private BigDecimal totalValueOfAllProducts;
+    private BigDecimal totalValueOfAllProducts;*/
 }

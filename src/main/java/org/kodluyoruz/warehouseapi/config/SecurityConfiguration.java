@@ -42,14 +42,14 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
                 http
                 .csrf()
-                .disable();
-               /* .authorizeRequests().antMatchers(
+                .disable()
+                .authorizeRequests().antMatchers(
                 "/registration**",
                 "/js/**",
                 "/static/css/**",
                 "/assets/**",
                 "/static/images/**").permitAll()
-                //.anyRequest().authenticated()
+                .anyRequest().authenticated()
                 .and()
                 .formLogin()
                 .loginPage("/login")
@@ -60,6 +60,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .clearAuthentication(true)
                 .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
                 .logoutSuccessUrl("/login?logout")
-                .permitAll();*/
+                .permitAll();
     }
 }
