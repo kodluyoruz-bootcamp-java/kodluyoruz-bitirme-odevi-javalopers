@@ -1,6 +1,8 @@
 package org.kodluyoruz.warehouseapi.base;
 
 import org.kodluyoruz.warehouseapi.model.dto.BaseIDDTO;
+import org.kodluyoruz.warehouseapi.model.dto.WarehouseDTO;
+import org.springframework.http.ResponseEntity;
 
 import java.util.Collection;
 
@@ -10,9 +12,9 @@ public interface WarehouseAPICRUDBaseService<T extends BaseIDDTO> {
 
     WarehouseAPIResponseHolder<T> getById(Long id);
 
-    WarehouseAPIResponseHolder<T> create(T data);
+    ResponseEntity<WarehouseAPIResponseHolder<T>> create(T data);
 
-    WarehouseAPIResponseHolder<T> update(Long id, T data);
+    ResponseEntity<WarehouseAPIResponseHolder<T>> update(Long id, T data);
 
-    WarehouseAPIResponseHolder<?> delete(Long id);
+    ResponseEntity<WarehouseAPIResponseHolder<?>> delete(Long id);
 }

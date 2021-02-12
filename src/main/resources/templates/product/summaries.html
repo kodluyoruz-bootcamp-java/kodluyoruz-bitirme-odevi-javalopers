@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Warehouse Management System</title>
+</head>
+
+<div class="modal-header">
+    <h5 class="modal-title" id="exampleModalLabel">Product Summaries</h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+
+<div class="modal-body">
+
+    <h3 th:text="${product.name}+ 'İsimli Ürünün Özel Bilgileri'"></h3>
+
+    <div th:object="${product}">
+
+        <div><label>ID: <span th:text="${product.id}"></span></label></div>
+        <div><label>CODE: <span th:text="${product.code}"></span></label></div>
+        <div><label>NAME: <span th:text="${product.name}"></span></label></div>
+        <div><label>VAT RATE: <span th:text="${product.vatRate}"></span></label></div>
+        <div><label>VAT AMOUNT: <span th:text="${product.vatAmount}"></span></label></div>
+        <div><label>VAT INCLUDED PRICE: <span th:text="${product.vatIncludedPrice}"></span></label></div>
+        <div><label>CREATED AT: <span th:text="${product.createdAt}"></span></label></div>
+        <div><label>UPDATED AT: <span th:text="${product.updatedAt}"></span></label></div>
+        <div><label>STATUS: <span th:text="${product.status}"></span></label></div>
+
+
+
+        <!--<div class="form-group">
+            <label class="col-form-label" type="text" th:value="*{id}"></label>
+
+        </div>-->
+
+
+        <!--<div class="row">
+            <div class="col-md-12">
+                <table class="table table-striped table-bordered table-hover small" id="products">
+                    <thead class="thead-dark">
+                    <tr>
+                        <th style="width: 25px;">ID</th>
+                        <th style="width: 25px;">Code</th>
+                        <th style="width: 25px;">Name</th>
+                        <th style="width: 25px;">VatRate</th>
+                        <th style="width: 50px;">VatAmount</th>
+                        <th style="width: 50px;">Price</th>
+                        <th style="width: 50px;">VatIncludedPrice</th>
+                        <th style="width: 50px;">CreatedAt</th>
+                        <th style="width: 50px;">UpdatedAt</th>
+                        <th style="width: 100px;">Status</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:object="${product}"
+                        th:attr="url=@{/products/product/summaries/{id}(id=${product.id})}">
+                        <td th:text="${product.id}"></td>
+                        <td th:text="${product.code}"></td>
+                        <td th:text="${product.name}"></td>
+                        <td th:text="${product.vatRate}"></td>
+                        <td th:text="${product.vatAmount}"></td>
+                        <td th:text="${product.price}"></td>
+                        <td th:text="${product.vatIncludedPrice}"></td>
+                        <td th:text="${product.createdAt}"></td>
+                        <td th:text="${product.updatedAt}"></td>
+                        <td th:text="${product.status}"></td>
+                    </tr>
+
+                    </tbody>
+                </table>
+            </div>
+        </div>-->
+
+    </div>
+
+
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+</div>

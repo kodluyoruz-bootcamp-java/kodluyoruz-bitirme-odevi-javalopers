@@ -6,9 +6,13 @@ import org.kodluyoruz.warehouseapi.base.WarehouseAPIResponseError;
 import org.kodluyoruz.warehouseapi.base.WarehouseAPIResponseHolder;
 import org.kodluyoruz.warehouseapi.dao.WarehouseOperationRepository;
 import org.kodluyoruz.warehouseapi.model.entites.ProductWarehouseEntity;
+import org.kodluyoruz.warehouseapi.model.entites.Summary;
+import org.kodluyoruz.warehouseapi.model.entites.WarehouseSummary;
 import org.kodluyoruz.warehouseapi.service.WarehouseOperationService;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.util.Collection;
 import java.util.Date;
@@ -99,6 +103,43 @@ public class WarehouseOperationServiceImpl implements WarehouseOperationService 
     @Override
     public Collection<ProductWarehouseEntity> getStocksFromThisWarehouse(Long warehouseId) {
         return warehouseOperationRepository.getStocksFromThisWarehouse(warehouseId);
+    }
+
+    @Override
+    public WarehouseAPIResponseHolder<Collection<Summary>> getProductsByWarehouseId(Long warehouseId) {
+
+        boolean isWarehouseExist = isThereAnyActiveEntryAtThisId(warehouseId);
+
+        if (!isWarehouseExist) {
+            return new WarehouseAPIResponseHolder<>(HttpStatus.NO_CONTENT, WarehouseAPIResponseError
+                    .builder()
+                    .code("WRONG_WAREHOUSE_ID")
+                    .message("An active repository for these ids was not found or selected warehouses are not active. Please check the values.")
+                    .build());
+        }
+
+        Collection<Summary> warehouseProducts = warehouseOperationRepository.getProductsByWarehouseId(warehouseId);
+
+        if (CollectionUtils.isEmpty(warehouseProducts)) {
+            return new WarehouseAPIResponseHolder<>(HttpStatus.NOT_FOUND, WarehouseAPIResponseError
+                    .builder()
+                    .code("DATA_NOT_FOUND")
+                    .message("No records found in the database.")
+                    .build());
+        }
+
+        return new WarehouseAPIResponseHolder<>(warehouseProducts,HttpStatus.OK);
+    }
+
+    @Override
+    public WarehouseAPIResponseHolder<WarehouseSummary> getSummaryOfThisWarehouse(Long warehouseId) {
+
+
+
+        WarehouseSummary summaryOfThisWarehouse = warehouseOperationRepository.getSummaryOfThisWarehouse(warehouseId);
+
+
+        return new WarehouseAPIResponseHolder<>(summaryOfThisWarehouse,HttpStatus.OK);
     }
 
     @Override

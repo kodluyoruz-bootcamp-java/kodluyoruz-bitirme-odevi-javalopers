@@ -14,8 +14,9 @@ public abstract class AbstractBaseWarehouseAPIRepository<T extends BaseEntity> e
     @Override
     public Collection<T> list() {
         return getSession()
-                .createQuery("from " + entity.getName() + " where status=:status", entity)
-                .setParameter("status", StatusEnum.ACTIVE)
+                .createQuery("from " + entity.getName(), entity)
+                //.createQuery("from " + entity.getName() + " where status=:status", entity)
+                //.setParameter("status", StatusEnum.ACTIVE)
                 .getResultList();
     }
 
